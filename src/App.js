@@ -3,16 +3,16 @@ import { View, Text } from 'react-native'
 
 import Navigation from './navigation/Navigation'
 import AuthProvider from './context/Auth'
-import TarefaProvider from './context/Tarefa'
+import TasksProvider from './context/Tasks'
 
 export default () => {
 
     return (
         
         <AuthProvider>
-            <TarefaProvider>
+            <TasksProvider>
                 <Navigation />
-            </TarefaProvider>
+            </TasksProvider>
         </AuthProvider>
         // <Navigation />
     )

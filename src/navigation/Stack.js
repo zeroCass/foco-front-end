@@ -6,9 +6,6 @@ import Drawer from './Drawer'
 import { AuthContext } from '../context/Auth'
 import RegisterTask from '../screens/RegisterTask'
 
-//contexts
-import TarefaProvider from '../context/Tarefa'
-
 
 
 function Login({ navigation }) {

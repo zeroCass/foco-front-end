@@ -12,13 +12,13 @@ import { Button, IconButton } from 'react-native-paper'
 import Task from '../components/Task'
 
 //contextos
-import { TarefaContext } from '../context/Tarefa'
+import { TasksContext } from '../context/Tasks'
 import { AuthContext } from '../context/Auth'
 
 
 export default (props) => {
     const  { user } = useContext(AuthContext)
-    const { tarefas } = useContext(TarefaContext)
+    const { tasks } = useContext(TasksContext)
 
     //prevent to goBack to loginScreen
     useFocusEffect(
@@ -32,34 +32,25 @@ export default (props) => {
         
         }, []))
 
-    const [showCreateTask, setShowCreateTask] = useState(false)
-    const [tasks, setTasks] = useState([])
 
+    // const startTask = taskID => {
+    //     let currentTasks = [...tasks]
+    //     currentTasks.forEach(task => task.id === taskID ? task.isActive = true : task.isActive)
+    //     setTasks(currentTasks)
+    // }
 
-    const addTask = task => {
-        task.id = Math.random()
-        console.log('TaskList, task: ', task)
-        setTasks([...tasks, task])
-    }
-
-    const startTask = taskID => {
-        let currentTasks = [...tasks]
-        currentTasks.forEach(task => task.id === taskID ? task.isActive = true : task.isActive)
-        setTasks(currentTasks)
-    }
-
-    const stopTask = taskID => {
-        let currentTasks = [...tasks]
-        currentTasks.forEach(task => task.id === taskID ? task.isActive = false : task.isActive)
-        setTasks(currentTasks)
-    }
+    // const stopTask = taskID => {
+    //     let currentTasks = [...tasks]
+    //     currentTasks.forEach(task => task.id === taskID ? task.isActive = false : task.isActive)
+    //     setTasks(currentTasks)
+    // }
 
     return (
             <View style={styles.container}>
                 <FlatList
-                    data={tarefas}
+                    data={tasks}
                     keyExtractor={item => `${item.id}`}
-                    renderItem={({ item }) => <Task {...item} start={startTask} stop={stopTask}/>}
+                    renderItem={({ item }) => <Task {...item} />}
                 />
                 <View style={styles.addButton}>
                     <IconButton

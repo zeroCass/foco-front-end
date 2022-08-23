@@ -7,7 +7,7 @@ import { DateTimePickerAndroid} from '@react-native-community/datetimepicker'
 import moment from 'moment'
 
 // import { AuthContext } from '../context/Auth'
-import { TarefaContext } from '../context/Tarefa'
+import { TasksContext } from '../context/Tasks'
 
 
 
@@ -25,7 +25,7 @@ const difficultyOptions = [
 
 export default props => {
     // const { state } = useContext(AuthContext)
-    const { dispatch } = useContext(TarefaContext)
+    const { dispatch } = useContext(TasksContext)
 
     const [name, setName] = useState('')
     const [desc, setDesc] = useState('')

@@ -4,14 +4,13 @@ import { createDrawerNavigator } from '@react-navigation/drawer'
 import { Button, Icon } from '@rneui/base'
 
 // import AuthProvider from '../context/Auth'
-import TarefaProvider from '../context/Tarefa'
 
 import CustomDrawer from './CustomDrawer'
 
 import TaskList from '../screens/TaskList'
 import Perfil from '../screens/Perfil'
 import Shop from '../screens/Shop'
-import RegisterTask from '../screens/RegisterTask'
+
 
 const Drawer = createDrawerNavigator()
 
@@ -55,16 +54,6 @@ export default () => {
                         }
                     }}
                 />
-                {/* <Drawer.Screen name='RegisterTask'component={RegisterTask}
-                    options={({ navigation }) => {
-                        return {
-                            headerTitleAlign: 'center',
-                            headerRight: () => (
-                                homeButton(navigation)
-                            )
-                        }
-                    }}
-                /> */}
             </Drawer.Navigator>
     )
 }

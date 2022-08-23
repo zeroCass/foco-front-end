@@ -1,29 +1,28 @@
-import React, { createContext, useState, useReducer } from 'react'
+import React, { createContext, useReducer } from 'react'
 
-export const TarefaContext = createContext({})
+export const TasksContext = createContext({})
 
 const initialState = []
-export default TarefaProvider = ({ children })  => {
+export default TasksProvider = ({ children })  => {
     // const [tarefas, setTarefas] = useState([{ name: 'Tarefa 1', desc: 'Descricao 1', id: Math.random() }])
 
     const reducer = (state, action) => {
         switch(action.type) {
             case 'addTask':
-                console.log('reducer: ', [...state, action.payload])
                 return [...state, action.payload]
             default:
                 return state
         }
     }
 
-    const [tarefas, dispatch] = useReducer(reducer, initialState)
+    const [tasks, dispatch] = useReducer(reducer, initialState)
 
     return (
-        <TarefaContext.Provider value={{
-            tarefas, dispatch
+        <TasksContext.Provider value={{
+            tasks, dispatch
         }}>
             { children }
-        </TarefaContext.Provider>
+        </TasksContext.Provider>
     )
 }
 
