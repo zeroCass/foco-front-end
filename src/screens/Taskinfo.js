@@ -34,7 +34,7 @@ const countDownTimer = (until) => {
 }
 
 export default (props) => {
-    console.log(props.isActive)
+
     const [active, setActive] = useState(false)
  
     const startTask = () => {

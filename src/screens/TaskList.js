@@ -10,8 +10,6 @@ import {
 import { Button, IconButton } from 'react-native-paper'
 
 import Task from '../components/Task'
-import Taskinfo from './Taskinfo'
-import CreateTask from './CreateTask'
 
 //contextos
 import { TarefaContext } from '../context/Tarefa'
@@ -58,29 +56,18 @@ export default (props) => {
 
     return (
             <View style={styles.container}>
-                <CreateTask isVisible={showCreateTask} onClose={() => setShowCreateTask(false)} onAddTask={addTask} />
                 <FlatList
                     data={tarefas}
                     keyExtractor={item => `${item.id}`}
                     renderItem={({ item }) => <Task {...item} start={startTask} stop={stopTask}/>}
                 />
-                {/* <FlatList
-                    data={tarefas}
-                    keyExtractor={item => `${item.id}`}
-                    renderItem={({ item }) => <Text>{item.id}-{item.name}</Text>}
-                /> */}
                 <View style={styles.addButton}>
                     <IconButton
                         icon='plus-circle'
                         size={50}
                         color='blue'
-                        onPress={() => setShowCreateTask(true)}
+                        onPress={() => props.navigation.navigate('RegisterTask')}
                     />
-                </View>
-                <View>
-                    <Button onPress={() => props.navigation.navigate('RegisterTask')}>
-                        Register
-                    </Button>
                 </View>
             </View>
     )

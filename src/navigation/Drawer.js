@@ -11,7 +11,6 @@ import CustomDrawer from './CustomDrawer'
 import TaskList from '../screens/TaskList'
 import Perfil from '../screens/Perfil'
 import Shop from '../screens/Shop'
-import CreateTask from '../screens/CreateTask'
 
 const Drawer = createDrawerNavigator()
 
