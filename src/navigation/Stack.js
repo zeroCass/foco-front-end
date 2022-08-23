@@ -9,13 +9,6 @@ import RegisterTask from '../screens/RegisterTask'
 //contexts
 import TarefaProvider from '../context/Tarefa'
 
-//wraper context inside registerTask component
-function RegTask() {
-    return (
-        
-            <RegisterTask/>
-    )
-}
 
 
 function Login({ navigation }) {
@@ -69,7 +62,7 @@ export default () => {
             </Stack.Group> 
             : <Stack.Group>
                     <Stack.Screen name='Main' component={Drawer} options={{ headerShown: false }}/>
-                    <Stack.Screen name='RegisterTask' component={RegTask} />
+                    <Stack.Screen name='RegisterTask' component={RegisterTask} />
             </Stack.Group>
         }
         </Stack.Navigator>

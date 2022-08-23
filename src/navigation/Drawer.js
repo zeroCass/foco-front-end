@@ -11,6 +11,7 @@ import CustomDrawer from './CustomDrawer'
 import TaskList from '../screens/TaskList'
 import Perfil from '../screens/Perfil'
 import Shop from '../screens/Shop'
+import RegisterTask from '../screens/RegisterTask'
 
 const Drawer = createDrawerNavigator()
 
@@ -54,7 +55,7 @@ export default () => {
                         }
                     }}
                 />
-                {/* <Drawer.Screen name='CreateTask'component={CreateTask}
+                {/* <Drawer.Screen name='RegisterTask'component={RegisterTask}
                     options={({ navigation }) => {
                         return {
                             headerTitleAlign: 'center',

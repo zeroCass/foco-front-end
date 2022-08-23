@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, Alert } from 'react-native'
 import { TextInput, Button } from 'react-native-paper'
 
 import RadioForm, {RadioButton, RadioButtonInput, RadioButtonLabel} from 'react-native-simple-radio-button'
@@ -39,31 +39,45 @@ export default props => {
     const stringTimeFormated = moment(estimateTime).format('HH[:]mm')
 
     const save = () => {
+        // get the datetime setup
+        const date = setupDateTime()
+        // returns if date is invalid
+        if (date <= new Date()) {
+            Alert.alert('Data inválida!', 'Forneça uma data válida',
+                [{ text: 'Ok' }], { cancelable: true })
+            return 
+        }
         const newTask = {
             id: Math.random() * 1000,
             name,
             desc,
-            estimateDate,
+            estimateDate: date,
             estimateTime,
             doneAt,
             priority,
             difficulty,
             isActive: false
         }
-
-        setName('')
-        setDesc('')
-        setEstimateDate(new Date())
-        setEstimateTime(new Date())
-        setDoneAt(null)
-        setPriority(0)
-        setDifficulty(0)
-
+        // call the dispatch
         dispatch({
             type: 'addTask',
             payload: newTask
         })
+        // go to Main Page
+        props.navigation.navigate('Main')
+
     }
+
+    // returns the date with the time setup
+    const setupDateTime = () => {
+        // convert the hours, minuts of the time to ms
+        const time2Ms = 
+            (estimateTime.getHours() * 3600 + estimateTime.getMinutes() * 60) * 1000
+        const dateMidnight = 
+            new Date(estimateDate.getFullYear(), estimateDate.getMonth(), estimateDate.getDate(), 0, 0, 0, 0).getTime()
+        return new Date(dateMidnight + time2Ms)
+    }
+
 
     return (
             <View style={{ flex: 1 }}>
@@ -117,8 +131,7 @@ export default props => {
                                 DateTimePickerAndroid.open({
                                     value: estimateTime,
                                     onChange: (_, time) => {
-                                        if (new Date(time) > new Date())
-                                            setEstimateTime(new Date(time))
+                                        setEstimateTime(new Date(time))
                                     },
                                     is24Hour: true,
                                     mode: 'time',
@@ -128,8 +141,7 @@ export default props => {
                                 DateTimePickerAndroid.open({
                                     value: estimateDate,
                                     onChange: (_, date) => {
-                                        if (new Date(date) >= new Date())
-                                            setEstimateDate(new Date(date))
+                                        setEstimateDate(new Date(date))
                                     },
                                     mode: 'date',
                                 })
