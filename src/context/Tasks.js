@@ -1,40 +1,47 @@
 import React, { createContext, useReducer } from 'react'
+import { Alert } from 'react-native'
 
 export const TasksContext = createContext({})
 
 const initialState = { tasks: [] }
 export default TasksProvider = ({ children })  => {
-    // const [tarefas, setTarefas] = useState([{ name: 'Tarefa 1', desc: 'Descricao 1', id: Math.random() }])
 
     const reducer = (state, action) => {
         switch(action.type) {
             case 'addTask':
+                let newTask = action.payload
+                // calculate the timeleft until task expire
+                let until = newTask.estimateDate.getTime() - new Date().getTime()
+                // call the countdown function to initilize the countdown
+                newTask.countdown(until)
                 return {
                     ...state, 
-                    tasks: [...state.tasks, action.payload],
+                    tasks: [...state.tasks, newTask],
                 }
             case 'startTask':
                 let tasks = [...state.tasks]
                 tasks.forEach(task => {
                     if (task.id === action.payload.id) {
                         // calculate the timeleft until task expire
-                        let until = task.estimateDate.getTime() - new Date().getTime()
+                        // until = task.estimateDate.getTime() - new Date().getTime()
                         task.isActive = true
-                        task.countdown(until)
+                        // task.countdown(until)
                     }
-                        
                 })
                 return {
                     ...state,
                     tasks: tasks,
                 }
             case 'expiredTask':
-                // console.warn('TASK HAS BEEN EXPIRED')
                 tasks = [...state.tasks]
                 tasks.forEach(task => {
                     let until = task.estimateDate.getTime() - new Date().getTime()
-                    if (until < 0) {
+                    if (until < 0 && task.doneAt === null && !task.expired) {
                         task.expired = true
+                        task.isActive = false
+                        Alert.alert('Tarefa Expirada!', `A tarefa ${task.name} não foi concluída a tempo`,[
+                            { text: 'OK' }
+                        ], { cancelable: true })
                     }
                 })
                 return {
@@ -42,7 +49,6 @@ export default TasksProvider = ({ children })  => {
                     tasks: tasks
                 }
             case 'doneTask':
-                console.log('Entrou doneTask')
                 tasks = [...state.tasks]
                 tasks.forEach(task => task.id === action.payload.id ? 
                         task.doneAt = new Date() : task.doneAt = null )

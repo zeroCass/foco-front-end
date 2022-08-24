@@ -14,10 +14,9 @@ const touchableView = (props) => (
     </TouchableWithoutFeedback>
 )
 
+// countdown timer component that takes the time left to count 
 const countDownTimer = (until) => {
-    console.log('Entrou coutndowntimer', until)
     return (
-        // <Text>Some Text</Text>
         <CountDown
             until={until}
             size={20}
@@ -39,26 +38,61 @@ const countDownTimer = (until) => {
     )
 }
 
-export default (props) => {
-
-    const [active, setActive] = useState(false)
-    const { dispatch } = useContext(TasksContext)
- 
-    // const startTask = () => {
-    //     props.start(props.id)
-    // }
-
-    const stopTask = () => {
-        console.warn('Stop task')
-        props.onClose()
+// check which button (iniciar, finalizar ou finalizado) should be displayed
+const renderButton = (props, dispatch) => {
+    // active and not completed
+    if (props.isActive && props.doneAt === null) {
+        return (
+            <Button onPress={() => {
+                // task completed
+                dispatch({
+                    type: 'doneTask',
+                    payload: { id: props.id }
+                })
+            }}>
+                Finalizar
+            </Button> 
+        )
+    }
+    // not initialized and not expired
+    if (!props.isActive && !props.expired) {
+        return (
+            <Button onPress={() => {
+                // startTask in Tasks
+                dispatch({
+                    type: 'startTask',
+                    payload: { id: props.id }
+                })
+            }}>
+                Iniciar
+            </Button>
+        )
+    }
+    // has been completed
+    if (props.doneAt !== null) {
+        return (
+            <Text> Finalizada em: {moment(props.doneAt).format('HH[:]mm D[/]MMM[/]YY')} </Text> 
+       )
     }
 
+    // expired
+    return (
+        <Text>Expirada em: {moment(props.estimateAt).format('HH[:]mm D[/]MMM[/]YY')}</Text>
+    )
+    
+
+}
+
+export default (props) => {
+
+    const { dispatch } = useContext(TasksContext)
+ 
     const stringDateFormated = moment(props.estimateDate).format('HH[:]mm D[/]MMM[/]YY')
-    // const stringTimeFormated = moment(props.estimateTime).format('HH[:]mm')
-    const until = props.isActive 
-                    ? (props.estimateDate.getTime() / 1000) - (new Date().getTime() / 1000)
-                    : 0
-    // const timeLeft = props.estimateDate + props.estimateTime
+
+    // if the task is active, then calculate the time left until expired
+    const until = 
+        props.isActive ? (props.estimateDate.getTime() / 1000) - (new Date().getTime() / 1000) : 0
+
     return (
         <Modal
             animationType='slide'
@@ -70,7 +104,6 @@ export default (props) => {
             <View style={styles.centerView}>
                 {touchableView(props)}
                 <View style={{ flex: 8, backgroundColor: '#FFF'}}>
-                    {active ? <Text>TRUE:{props.isActive}</Text> : null}
                     <Text>Nome:{props.name}</Text>
                     <Text>Descricao: {props.desc}</Text>
                     <Text>Prioridade: {props.priority}</Text>
@@ -78,29 +111,7 @@ export default (props) => {
                     <Text>Prazo: {stringDateFormated}</Text>
                     {props.isActive && !props.expired && props.doneAt == null ? countDownTimer(until): null}
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        {!props.isActive && props.doneAt === null ? 
-                            <Button onPress={() => {
-                                // startTask in Tasks
-                                dispatch({
-                                    type: 'startTask',
-                                    payload: { id: props.id }
-                                })
-                                setActive(true)
-                            }}>
-                                Iniciar
-                            </Button>
-                        : props.isActive && props.doneAt === null ?
-                        <Button onPress={() => {
-                            // task completed
-                            dispatch({
-                                type: 'doneTask',
-                                payload: { id: props.id }
-                            })
-                        }}>
-                            Finalizar
-                        </Button> 
-                        : <Text> Finalizada em: {moment(props.doneAt).format('HH[:]mm D[/]MMM[/]YY')} </Text> 
-                        }
+                        {renderButton(props, dispatch)}
                     </View>
                 </View>
                 {touchableView(props)}

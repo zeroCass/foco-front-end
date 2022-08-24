@@ -55,6 +55,8 @@ export default props => {
             priority,
             difficulty,
             isActive: false,
+            expired: false,
+            // countdown function setup a timeout with the time left until task expired
             countdown: (until) => setTimeout(() => dispatch({ type: 'expiredTask', payload: null }), until)
         }
         // call the dispatch

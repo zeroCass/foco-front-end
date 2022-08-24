@@ -28,9 +28,10 @@ export default (props) => {
                         </View>
                     <View style={{ alignItems: 'center' }} >
                         <Text>{props.isActive && !props.expired && props.doneAt === null ? 'Em Andamento':
-                                !props.isActive ? 'Não Iniciado' : 
+                                !props.isActive && !props.expired ? 'Não Iniciado' : 
                                 props.expired ? 'Expirado' :
-                                props.doneAt !== null ? 'Finalizada' : null}</Text>
+                                props.doneAt !== null ? 'Finalizada' : null}
+                        </Text>
                     </View>
                 </View>
             </TouchableOpacity>
