@@ -18,7 +18,8 @@ import { AuthContext } from '../context/Auth'
 
 export default (props) => {
     const  { user } = useContext(AuthContext)
-    const { tasks } = useContext(TasksContext)
+    const { state } = useContext(TasksContext)
+    const tasks = state.tasks
 
     //prevent to goBack to loginScreen
     useFocusEffect(
@@ -31,6 +32,8 @@ export default (props) => {
           return () => backHandler.remove()
         
         }, []))
+
+        // useEffect(() => { console.log('Entrou useEffect') } , [tasks])
 
 
     // const startTask = taskID => {

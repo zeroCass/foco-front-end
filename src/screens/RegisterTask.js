@@ -31,7 +31,6 @@ export default props => {
     const [desc, setDesc] = useState('')
     const [estimateDate, setEstimateDate] = useState(new Date())
     const [estimateTime, setEstimateTime] = useState(new Date())
-    const [doneAt, setDoneAt] = useState(null)
     const [priority, setPriority] = useState(0)
     const [difficulty, setDifficulty] = useState(0)
 
@@ -52,11 +51,11 @@ export default props => {
             name,
             desc,
             estimateDate: date,
-            estimateTime,
-            doneAt,
+            doneAt: null,
             priority,
             difficulty,
-            isActive: false
+            isActive: false,
+            countdown: (until) => setTimeout(() => dispatch({ type: 'expiredTask', payload: null }), until)
         }
         // call the dispatch
         dispatch({

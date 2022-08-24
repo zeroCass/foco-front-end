@@ -8,8 +8,8 @@ export default (props) => {
     
     const [showTaskInfo, setTaskInfo] = useState(false)
 
-    const stringDateFormated = moment(props.estimateDate).format('D[/]MMM[/]YY')
-    const stringTimeFormated = moment(props.estimateTime).format('HH[:]mm')
+    const stringDateFormated = moment(props.estimateDate).format('HH[:]mm D[/]MMM[/]YY')
+    // const stringTimeFormated = moment(props.estimateTime).format('HH[:]mm')
 
     return (
         <>
@@ -20,14 +20,17 @@ export default (props) => {
                         <View style={styles.taskContainer}>
                             <View style={styles.textContainer}>
                                 <Text>Prioridade: {props.priority}</Text>
-                                <Text>Prazo: {stringTimeFormated} - {stringDateFormated}</Text>
+                                <Text>Prazo: {stringDateFormated}</Text>
                             </View>
                             <View style={styles.checkContainer}>
                                 <View style={styles.buttonCheck}></View>
                             </View>
                         </View>
                     <View style={{ alignItems: 'center' }} >
-                        <Text>{props.isActive ? 'Em Andamento': 'Não Iniciado'}</Text>
+                        <Text>{props.isActive && !props.expired && props.doneAt === null ? 'Em Andamento':
+                                !props.isActive ? 'Não Iniciado' : 
+                                props.expired ? 'Expirado' :
+                                props.doneAt !== null ? 'Finalizada' : null}</Text>
                     </View>
                 </View>
             </TouchableOpacity>

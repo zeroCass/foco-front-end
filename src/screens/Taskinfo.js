@@ -1,8 +1,11 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useContext } from 'react'
 import { Modal, View, Text, TouchableWithoutFeedback, StyleSheet } from 'react-native'
 import { Button } from 'react-native-paper'
 import moment from 'moment'
 import CountDown from 'react-native-countdown-component' 
+
+import { TasksContext } from '../context/Tasks'
+
 
 // component: touchable with view container thats close the modal
 const touchableView = (props) => (
@@ -14,42 +17,46 @@ const touchableView = (props) => (
 const countDownTimer = (until) => {
     console.log('Entrou coutndowntimer', until)
     return (
-    <CountDown
-        until={until}
-        size={20}
-        showSeparator={true}
-        timeLabels={false}
-        timeLabelStyle={{ color: '#000' }}
-        digitStyle={null}
-        digitTxtStyle={{ color: '#FFF' }}
-        separatorStyle={{ color: '#FFF' }}
-        timeToShow={['H', 'M', 'S']}
-        style={{ 
-            backgroundColor: 'blue', 
-            width: 200, height: 50, 
-            borderRadius: 50, 
-            justifyContent: 'center', alignItems: 'center' 
-        }}
-    />)
+        // <Text>Some Text</Text>
+        <CountDown
+            until={until}
+            size={20}
+            showSeparator={true}
+            timeLabels={false}
+            timeLabelStyle={{ color: '#000' }}
+            digitStyle={null}
+            digitTxtStyle={{ color: '#FFF' }}
+            separatorStyle={{ color: '#FFF' }}
+            timeToShow={['H', 'M', 'S']}
+            style={{ 
+                backgroundColor: 'blue', 
+                width: 200, height: 50, 
+                borderRadius: 50, 
+                justifyContent: 'center', alignItems: 'center' 
+            }}
+            onFinish={() => console.warn('Time ran out')}
+        />
+    )
 }
 
 export default (props) => {
 
     const [active, setActive] = useState(false)
+    const { dispatch } = useContext(TasksContext)
  
-    const startTask = () => {
-        props.start(props.id)
-    }
+    // const startTask = () => {
+    //     props.start(props.id)
+    // }
 
     const stopTask = () => {
-        props.stop(props.id)
+        console.warn('Stop task')
         props.onClose()
     }
 
-    const stringDateFormated = moment(props.estimateDate).format('D[/]MMM[/]YY')
-    const stringTimeFormated = moment(props.estimateTime).format('HH[:]mm')
+    const stringDateFormated = moment(props.estimateDate).format('HH[:]mm D[/]MMM[/]YY')
+    // const stringTimeFormated = moment(props.estimateTime).format('HH[:]mm')
     const until = props.isActive 
-                    ? 86400
+                    ? (props.estimateDate.getTime() / 1000) - (new Date().getTime() / 1000)
                     : 0
     // const timeLeft = props.estimateDate + props.estimateTime
     return (
@@ -68,20 +75,32 @@ export default (props) => {
                     <Text>Descricao: {props.desc}</Text>
                     <Text>Prioridade: {props.priority}</Text>
                     <Text>Dificuldade: {props.difficulty}</Text>
-                    <Text>Prazo: {stringDateFormated} - {stringTimeFormated}</Text>
-                    {props.isActive ? countDownTimer(until): null}
+                    <Text>Prazo: {stringDateFormated}</Text>
+                    {props.isActive && !props.expired && props.doneAt == null ? countDownTimer(until): null}
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        {!props.isActive ? 
+                        {!props.isActive && props.doneAt === null ? 
                             <Button onPress={() => {
-                                startTask()
+                                // startTask in Tasks
+                                dispatch({
+                                    type: 'startTask',
+                                    payload: { id: props.id }
+                                })
                                 setActive(true)
                             }}>
                                 Iniciar
                             </Button>
-                        : 
-                        <Button onPress={stopTask}>
+                        : props.isActive && props.doneAt === null ?
+                        <Button onPress={() => {
+                            // task completed
+                            dispatch({
+                                type: 'doneTask',
+                                payload: { id: props.id }
+                            })
+                        }}>
                             Finalizar
-                        </Button>}
+                        </Button> 
+                        : <Text> Finalizada em: {moment(props.doneAt).format('HH[:]mm D[/]MMM[/]YY')} </Text> 
+                        }
                     </View>
                 </View>
                 {touchableView(props)}
