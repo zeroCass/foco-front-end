@@ -3,6 +3,7 @@ import { View, Button, Text } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 
 import Drawer from './Drawer'
+import BottomTab from './BottomTab'
 import { AuthContext } from '../context/Auth'
 import RegisterTask from '../screens/RegisterTask'
 
@@ -60,6 +61,7 @@ export default () => {
             : <Stack.Group>
                     <Stack.Screen name='Main' component={Drawer} options={{ headerShown: false }}/>
                     <Stack.Screen name='RegisterTask' component={RegisterTask} />
+                    <Stack.Screen name='BottomTab' component={BottomTab} options={{ headerShown: false }}/>
             </Stack.Group>
         }
         </Stack.Navigator>

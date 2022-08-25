@@ -25,6 +25,7 @@ export default (props) => {
     let countdowns = []
     // const intervalRef = useRef([]) useReft is useless cause i dont want to keep the value
     
+    // for each tasks, setup a personal timeout
     const setupCountdowns = () => {
         countdowns = tasks.map(task => {
             const until = task.estimateDate.getTime() - new Date().getTime()

@@ -2,10 +2,21 @@ import React  from 'react'
 import { Button, View, Text } from 'react-native'
 import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import { createDrawerNavigator } from '@react-navigation/drawer'
-import { NavigationContainer } from '@react-navigation/native';
+import { NavigationContainer } from '@react-navigation/native'
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
 
 const Stack = createNativeStackNavigator()
 const Drawer = createDrawerNavigator()
+const Tab = createBottomTabNavigator()
+
+
+function Info(props) {
+    return (
+        <View>
+            <Text>Info</Text>
+        </View>
+    )
+}
 
 
 function Shop({ navigation }){
@@ -86,14 +97,24 @@ function StackNavigator() {
     )
 }
 
-function DrawerNavigator() {
+function DrawerNavigator() { 
     return (
         <Drawer.Navigator>
-            <Drawer.Screen name='Home' component={HomeScreen} />
+            <Drawer.Screen name='Home' component={TabNavigator} options={{ title: 'Tarefas' }}/>
+            {/* <Drawer.Screen name='Home' component={HomeScreen} /> */}
             <Drawer.Screen name='Notifications' component={NotificationsScreen} />
             <Drawer.Screen name='Shop' component={Shop} />
             <Drawer.Screen name='Perfil' component={Perfil} />
         </Drawer.Navigator>
+    )
+}
+
+function TabNavigator() {
+    return (
+        <Tab.Navigator>
+            <Tab.Screen name='HomeScreen' component={HomeScreen} options={{ headerShown: false }}/>
+            <Tab.Screen name='Info' component={Info} options={{ headerShown: false }}/>
+        </Tab.Navigator>
     )
 }
 

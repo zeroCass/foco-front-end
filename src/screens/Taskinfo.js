@@ -6,13 +6,8 @@ import CountDown from 'react-native-countdown-component'
 
 import { TasksContext } from '../context/Tasks'
 
-
 // component: touchable with view container thats close the modal
-const touchableView = (props) => (
-    <TouchableWithoutFeedback onPress={props.onClose}>
-        <View style={styles.background}></View>
-    </TouchableWithoutFeedback>
-)
+import TouchableView from '../components/TouchableView'
 
 // countdown timer component that takes the time left to count 
 const countDownTimer = (until) => {
@@ -100,10 +95,10 @@ export default (props) => {
             transparent={true}
             onRequestClose={props.onClose}
         >   
-            {touchableView(props)} 
+            <TouchableView {...props} /> 
             <View style={styles.centerView}>
-                {touchableView(props)}
-                <View style={{ flex: 8, backgroundColor: '#FFF'}}>
+                <TouchableView {...props} /> 
+                <View style={styles.contentView}>
                     <Text>Nome:{props.name}</Text>
                     <Text>Descricao: {props.desc}</Text>
                     <Text>Prioridade: {props.priority}</Text>
@@ -114,9 +109,9 @@ export default (props) => {
                         {renderButton(props, dispatch)}
                     </View>
                 </View>
-                {touchableView(props)}
+                <TouchableView {...props} /> 
             </View>
-            {touchableView(props)}
+            <TouchableView {...props} /> 
         </Modal>
     )
 }
@@ -128,6 +123,10 @@ const styles = StyleSheet.create({
     },
     centerView: {
         height: '70%',
-        flexDirection: 'row'
+        flexDirection: 'row',
+    },
+    contentView: {
+        backgroundColor: '#FFF',
+        flex: 8,
     }
 })
