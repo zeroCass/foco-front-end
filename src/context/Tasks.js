@@ -13,7 +13,7 @@ export default TasksProvider = ({ children })  => {
                 // calculate the timeleft until task expire
                 let until = newTask.estimateDate.getTime() - new Date().getTime()
                 // call the countdown function to initilize the countdown
-                newTask.countdown(until)
+                // newTask.countdown(until)
                 return {
                     ...state, 
                     tasks: [...state.tasks, newTask],

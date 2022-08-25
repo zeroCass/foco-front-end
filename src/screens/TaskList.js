@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useContext, useEffect } from 'react'
+import React, { useState, useCallback, useContext, useEffect, useRef } from 'react'
 import { useFocusEffect } from '@react-navigation/native'
 import { 
     View, 
@@ -18,8 +18,25 @@ import { AuthContext } from '../context/Auth'
 
 export default (props) => {
     const  { user } = useContext(AuthContext)
-    const { state } = useContext(TasksContext)
+    const { state, dispatch } = useContext(TasksContext)
     const tasks = state.tasks
+
+    // array of obj that contains all the seTimeout reference for each task
+    let countdowns = []
+    // const intervalRef = useRef([]) useReft is useless cause i dont want to keep the value
+    
+    const setupCountdowns = () => {
+        countdowns = tasks.map(task => {
+            const until = task.estimateDate.getTime() - new Date().getTime()
+            return setTimeout(() => dispatch({ type: 'expiredTask', payload: null }), until)
+        })
+    }
+
+    useEffect(() => {
+        setupCountdowns()
+        return () => countdowns.forEach(elem => clearInterval(elem))
+    }, [tasks])
+
 
     //prevent to goBack to loginScreen
     useFocusEffect(
