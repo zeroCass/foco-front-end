@@ -5,7 +5,8 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack'
 import Drawer from './Drawer'
 import BottomTab from './BottomTab'
 import { AuthContext } from '../context/Auth'
-import RegisterTask from '../screens/RegisterTask'
+import RegisterTask from '../screens/tasks/RegisterTask'
+import CreateMission from '../screens/missions/CreateMission'
 
 
 
@@ -61,7 +62,7 @@ export default () => {
             : <Stack.Group>
                     <Stack.Screen name='Main' component={Drawer} options={{ headerShown: false }}/>
                     <Stack.Screen name='RegisterTask' component={RegisterTask} />
-                    <Stack.Screen name='BottomTab' component={BottomTab} options={{ headerShown: false }}/>
+                    <Stack.Screen name='CreateMission' component={CreateMission} />
             </Stack.Group>
         }
         </Stack.Navigator>

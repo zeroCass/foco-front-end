@@ -4,10 +4,10 @@ import { Button } from 'react-native-paper'
 import moment from 'moment'
 import CountDown from 'react-native-countdown-component' 
 
-import { TasksContext } from '../context/Tasks'
+import { TasksContext } from '../../context/Tasks'
 
 // component: touchable with view container thats close the modal
-import TouchableView from '../components/TouchableView'
+import TouchableView from '../../components/TouchableView'
 
 // countdown timer component that takes the time left to count 
 const countDownTimer = (until) => {

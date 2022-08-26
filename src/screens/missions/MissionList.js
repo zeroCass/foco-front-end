@@ -1,22 +1,25 @@
 import React, { useContext, useState } from 'react'
-import { View, Text, StyleSheet } from 'react-native'
+import { View, Text, StyleSheet, FlatList } from 'react-native'
 import { IconButton } from 'react-native-paper'
 
-import CreateMission from './CreateMission'
 
 export default props => {
-    const [modalVisibilty, setModalVisibility] = useState(false) 
+
+    const [missions, setMissions] = useState([])
+
+    const addMission = (mission) => {
+        console.log(mission)
+    }
 
     return (
         <View style={styles.container}>
-            <CreateMission isVisible={modalVisibilty} onClose={() => setModalVisibility(false)} />
             <Text>Missoes</Text>
             <View style={styles.addButton}>
                 <IconButton
                     icon='plus-circle'
                     size={50}
                     color='blue'
-                    onPress={() => setModalVisibility(true)}
+                    onPress={() => props.navigation.navigate('CreateMission', { addMission: addMission })}
                 />
             </View>
         </View>

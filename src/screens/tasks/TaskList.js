@@ -9,11 +9,11 @@ import {
 } from 'react-native'
 import { Button, IconButton } from 'react-native-paper'
 
-import Task from '../components/Task'
+import Task from '../../components/Task'
 
 //contextos
-import { TasksContext } from '../context/Tasks'
-import { AuthContext } from '../context/Auth'
+import { TasksContext } from '../../context/Tasks'
+import { AuthContext } from '../../context/Auth'
 
 
 export default (props) => {

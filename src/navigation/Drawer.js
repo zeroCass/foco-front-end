@@ -7,7 +7,9 @@ import { Button, Icon } from '@rneui/base'
 
 import CustomDrawer from './CustomDrawer'
 
-import TaskList from '../screens/TaskList'
+import BottomTab from './BottomTab'
+
+import TaskList from '../screens/tasks/TaskList'
 import Perfil from '../screens/Perfil'
 import Shop from '../screens/Shop'
 
@@ -29,9 +31,9 @@ export default () => {
                 useLegacyImplementation 
                 drawerContent={(props) => <CustomDrawer {...props} />}
             >
-                <Drawer.Screen name='Home' component={TaskList}
+                <Drawer.Screen name='Home' component={BottomTab}
                     options={({ navigation }) => {
-                        return { headerTitleAlign: 'center' }
+                        return { headerTitleAlign: 'center', title: 'Tarefas' }
                         }}
                 />
                 <Drawer.Screen name='Perfil'component={Perfil}

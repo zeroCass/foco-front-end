@@ -7,7 +7,7 @@ import { DateTimePickerAndroid} from '@react-native-community/datetimepicker'
 import moment from 'moment'
 
 // import { AuthContext } from '../context/Auth'
-import { TasksContext } from '../context/Tasks'
+import { TasksContext } from '../../context/Tasks'
 
 
 
@@ -33,6 +33,7 @@ export default props => {
     const [estimateTime, setEstimateTime] = useState(new Date())
     const [priority, setPriority] = useState(0)
     const [difficulty, setDifficulty] = useState(0)
+    const [category, setCategory] = useState('')
 
     const stringDateFormated = moment(estimateDate).format('D[/]MMM[/]YY')
     const stringTimeFormated = moment(estimateTime).format('HH[:]mm')
@@ -54,6 +55,7 @@ export default props => {
             doneAt: null,
             priority,
             difficulty,
+            category,
             isActive: false,
             expired: false,
             // countdown function setup a timeout with the time left until task expired
@@ -90,6 +92,15 @@ export default props => {
                         mode='outlined'
                         outlineColor='#6495ED'
                         placeholder='Nome da Tarefa'
+                        activeOutlineColor='#6495ED'
+                    />
+                    <TextInput
+                        value={category}
+                        label='Categoria'
+                        onChangeText={(category) => setCategory(category)}
+                        mode='outlined'
+                        outlineColor='#6495ED'
+                        placeholder='Ex: Estudo, Trabalho, Domestica...'
                         activeOutlineColor='#6495ED'
                     />
                     <TextInput
