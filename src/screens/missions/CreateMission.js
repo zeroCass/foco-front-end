@@ -11,25 +11,26 @@ const ModalList = (props) => {
     const { state } = useContext(TasksContext)
     const [selectedTasks, setSelectedTasks] = useState([])
 
+
     const tasks = state.tasks.filter(task => {
-        // get the tasks that has the sae category and was not initialized
-        return (task.category === props.tasksCategory && !task.isActive) 
+        // get the tasks that has the same category and was not initialized and not missonid
+        return (task.category === props.tasksCategory && !task.isActive && task.missionId === null) 
     })
 
     // array with all selected tasks
 
     // insert task if is not in array or exlude tasks if the array includes
-    const selectedTasksID = (id) => {
-        const task = tasks.filter(task => task.id === id ? true : false)
-        console.log('selectedTask[0]: ', selectedTasks)
-        selectedTasks.includes(...task) 
-            ? setSelectedTasks(selectedTasks.filter(task => task.id !== task.id ? true : false))
-            : setSelectedTasks((prev) => {
-                const newTasks = [...prev, ...task]
-                console.log('selectedTask[1]: ', newTasks)
-                return newTasks
-            })
-        console.log('selectedTask[2]: ', selectedTasks)
+    const selectedTasksID = (id, selected) => {
+        const [ task ] = tasks.filter(task => task.id === id ? true : false)
+        
+        if (selected && !selectedTasks.includes(task)) {
+            setSelectedTasks([...selectedTasks, task])
+         }
+        
+         if (!selected && selectedTasks.includes(task)) {
+            setSelectedTasks(selectedTasks.filter(task => task.id !== id ? true : false))
+         }
+
     }
 
     return (
@@ -66,25 +67,58 @@ const ModalList = (props) => {
 }
 
 export default props => {
+
+    const { state, dispatch } = useContext(TasksContext)
     const [modalVisibilty, setModalVisibility] = useState(false) 
     const [category, setCategory] = useState('')
+    const [name, setName] = useState('')
     
+    //selectedTask passa a ser state
+    //onSave passa a adicionar tasks no selectedTask
+    //implementar botao de cancelar para sair da tela
 
     const save = (selectedTasks) => {
-        console.log('selectedTask(save): ', selectedTasks)
+        //calculate avarage time left
+        //calculate avarage difficult
+
         const mission = {
             id: Math.random() * 1000,
-            name: 'Missao 1',
+            name,
             category,
             // difficult,
             tasks: selectedTasks,
         }
+
+        // set task id for each task in the mission array
+        selectedTasks.forEach(sTask => {
+            state.tasks.forEach(task => {
+                if (task.id === sTask.id) {
+                    dispatch({
+                        type: 'setMission',
+                        payload: {
+                            id: task.id,
+                            missionId: mission.id
+                        }
+                    })
+                } 
+            })
+        })
+        //convert data to json to pass through screen (navigation)
         const missionJSON = JSON.stringify(mission)
         props.navigation.navigate('MissionList', missionJSON)
     }
 
     return (
         <View>
+            <TextInput
+                value={name}
+                label='Nome'
+                onChangeText={(name) => setName(name)}
+                mode='outlined'
+                outlineColor='#6495ED'
+                placeholder='Nome da Missão'
+                activeOutlineColor='#6495ED'
+            />
             <TextInput
                 value={category}
                 label='Categoria'

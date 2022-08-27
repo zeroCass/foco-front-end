@@ -32,6 +32,7 @@ export default TasksProvider = ({ children })  => {
                     ...state,
                     tasks: tasks,
                 }
+            // change this to expired only task id
             case 'expiredTask':
                 tasks = [...state.tasks]
                 tasks.forEach(task => {
@@ -52,6 +53,18 @@ export default TasksProvider = ({ children })  => {
                 tasks = [...state.tasks]
                 tasks.forEach(task => task.id === action.payload.id ? 
                         task.doneAt = new Date() : task.doneAt = null )
+                return {
+                    ...state,
+                    tasks: tasks
+                }
+            case 'setMission':
+                tasks = [...state.tasks]
+                tasks.forEach(task => {
+                    if (task.id === action.payload.id) {
+                        task.missionId = action.payload.missionId
+                        console.log('setMission - task:', task.name) 
+                    }  
+                })
                 return {
                     ...state,
                     tasks: tasks

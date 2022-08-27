@@ -19,7 +19,8 @@ import { AuthContext } from '../../context/Auth'
 export default (props) => {
     const  { user } = useContext(AuthContext)
     const { state, dispatch } = useContext(TasksContext)
-    const tasks = state.tasks
+    // get only tasks that not belong a mission
+    const tasks = state.tasks.filter(task => task.missionId === null ? true : false)
 
     // array of obj that contains all the seTimeout reference for each task
     let countdowns = []
@@ -51,7 +52,6 @@ export default (props) => {
         
         }, []))
 
-        // useEffect(() => { console.log('Entrou useEffect') } , [tasks])
 
 
     // const startTask = taskID => {

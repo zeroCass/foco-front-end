@@ -1,19 +1,16 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 
 // retorna o componente selectbox  
-
 export default props => {
     const [selected, setSelected] = useState(false)
 
-    const selectTask = () => {
-        setSelected(!selected)
-        props.onPress(props.id)
-    }
-
+    useEffect(() => {
+        props.onPress(props.id, selected)
+    }, [selected])
 
     return (
-        <TouchableOpacity onPress={selectTask}>
+        <TouchableOpacity onPress={() => setSelected(!selected)}>
             <View style={styles.container}>
                 <View style={styles.checkContainer}>
                     <View style={[styles.checkBox, selected ? {backgroundColor: '#7CFC00'} : {}]} />
