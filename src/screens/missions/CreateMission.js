@@ -9,21 +9,27 @@ import { TasksContext } from '../../context/Tasks'
 const ModalList = (props) => {
 
     const { state } = useContext(TasksContext)
+    const [selectedTasks, setSelectedTasks] = useState([])
+
     const tasks = state.tasks.filter(task => {
         // get the tasks that has the sae category and was not initialized
         return (task.category === props.tasksCategory && !task.isActive) 
     })
 
     // array with all selected tasks
-    let selectedTasks = []
 
     // insert task if is not in array or exlude tasks if the array includes
     const selectedTasksID = (id) => {
         const task = tasks.filter(task => task.id === id ? true : false)
-
+        console.log('selectedTask[0]: ', selectedTasks)
         selectedTasks.includes(...task) 
-            ? selectedTasks = selectedTasks.filter(task => task.id !== task.id ? true : false)
-            : selectedTasks.push(...task)
+            ? setSelectedTasks(selectedTasks.filter(task => task.id !== task.id ? true : false))
+            : setSelectedTasks((prev) => {
+                const newTasks = [...prev, ...task]
+                console.log('selectedTask[1]: ', newTasks)
+                return newTasks
+            })
+        console.log('selectedTask[2]: ', selectedTasks)
     }
 
     return (
@@ -65,7 +71,7 @@ export default props => {
     
 
     const save = (selectedTasks) => {
-
+        console.log('selectedTask(save): ', selectedTasks)
         const mission = {
             id: Math.random() * 1000,
             name: 'Missao 1',
@@ -73,9 +79,8 @@ export default props => {
             // difficult,
             tasks: selectedTasks,
         }
-        const { addMission } = props.route.params
-        addMission(mission)
-        props.navigation.navigate('MissionList')
+        const missionJSON = JSON.stringify(mission)
+        props.navigation.navigate('MissionList', missionJSON)
     }
 
     return (
