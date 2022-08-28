@@ -19,6 +19,8 @@ import { AuthContext } from '../../context/Auth'
 export default (props) => {
     const  { user } = useContext(AuthContext)
     const { state, dispatch } = useContext(TasksContext)
+    // const [countdowns, setCountdowns] = useState([])
+    // const [countdowns2init, setCountdowns2init] = useState([])
 
     // get only tasks that not belong a mission
     const tasks = state.tasks.filter(task => task.missionId === null ? true : false)
@@ -30,18 +32,39 @@ export default (props) => {
     
     // for each tasks, setup a personal timeout
     const setupCountdowns = () => {
-        countdowns = tasks.map(task => {
-            // pegar tasks que o init time < date now
-            if (task.initDate === null || (new Date().getTime() >= task.initDate.getTime())) {
-                const until = task.estimateDate.getTime() - new Date().getTime()
-                return setTimeout(() => dispatch({ type: 'expiredTask', payload: null }), until)
-            } 
+        // cria array aux
+        const auxCountdowns = [...countdowns]
+
+        // para cada task, realizar filtro para verificar se ja existe um CT para ela
+        // Se o resultado for UNDEFINED (n tem), 
+        //entao adiioncar um obj contendo CT e o ID da task no array de COUTNDOWN
+        tasks.forEach(task => {
+            let [taskNotCt] = countdowns.filter(ct => {
+                return ct.id === task.id ? true : false
+            })
+
+            if (!taskNotCt) {
+                // pegar tasks que o init time < date now
+                if ((!task.expired && task.doneAt === null) && 
+                    (task.initDate === null || (new Date().getTime() >= task.initDate.getTime()))) {
+                    const until = task.estimateDate.getTime() - new Date().getTime()
+                    auxCountdowns.push({
+                        timeout: setTimeout(() => dispatch({ type: 'expiredTask', payload: null }), until),
+                        id: task.id,
+                    })
+                } 
+            }
         })
+        countdowns = auxCountdowns
+        // if (newCountdown.length != countdowns.length)
+        //     setCountdowns(newCountdown)
+        
     }
 
     const setupCountidowns2init = () => {
-        countdowns2init = tasks.map(task => {
-            if (task.initDate !== null) {
+        const auxCountdowns2init = tasks.map(task => {
+            if ((!task.expired && task.doneAt === null) && 
+                (task.initDate !== null && task.initDate.getTime() > new Date().getTime())) {
                 const until = task.initDate.getTime() - new Date().getTime()
                 return setTimeout(() => {
                     dispatch({ type: 'initCountdown', payload: null })
@@ -49,15 +72,17 @@ export default (props) => {
                 }, until)
             }
         })
+        countdowns2init = auxCountdowns2init
+        // if (auxCountdowns2init.length != countdowns2init.length)
+        //     setCountdowns2init(auxCountdowns2init)
     }
 
     useEffect(() => {
-        console.log('re-render')
         setupCountidowns2init()
         setupCountdowns()
-        return () => {
+        return () => { 
             countdowns2init.forEach(elem => clearInterval(elem))
-            countdowns.forEach(elem => clearInterval(elem))
+            countdowns.forEach(elem => clearInterval(elem.timeout))
         }
     }, [tasks])
 

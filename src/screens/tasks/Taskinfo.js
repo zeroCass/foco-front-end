@@ -36,7 +36,7 @@ const countDownTimer = (until) => {
 // check which button (iniciar, finalizar ou finalizado) should be displayed
 const renderButton = (props, dispatch) => {
     // active and not completed
-    if (props.isActive && props.doneAt === null) {
+    if (props.isActive && props.doneAt === null && !props.expired) {
         return (
             <Button onPress={() => {
                 // task completed
@@ -49,8 +49,8 @@ const renderButton = (props, dispatch) => {
             </Button> 
         )
     }
-    // not initialized and not expired
-    if (!props.isActive && !props.expired) {
+    // not active and not expired and not done
+    if (!props.isActive && !props.expired && props.doneAt === null) {
         return (
             <Button onPress={() => {
                 // startTask in Tasks
@@ -71,10 +71,11 @@ const renderButton = (props, dispatch) => {
     }
 
     // expired
-    return (
-        <Text>Expirada em: {moment(props.estimateAt).format('HH[:]mm D[/]MMM[/]YY')}</Text>
-    )
-    
+    if (props.expired) {
+        return (
+            <Text>Expirada em: {moment(props.estimateAt).format('HH[:]mm D[/]MMM[/]YY')}</Text>
+        )
+    }  
 
 }
 
@@ -104,7 +105,7 @@ export default (props) => {
                     <Text>Prioridade: {props.priority}</Text>
                     <Text>Dificuldade: {props.difficulty}</Text>
                     <Text>Prazo: {stringDateFormated}</Text>
-                    {props.isActive && !props.expired && props.doneAt == null ? countDownTimer(until): null}
+                    {props.isActive && !props.expired && props.doneAt === null ? countDownTimer(until): null}
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         {renderButton(props, dispatch)}
                     </View>

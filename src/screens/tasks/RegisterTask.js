@@ -68,6 +68,7 @@ export default props => {
             estimateDate: finalDate,
             initDate: startDate,
             doneAt: null,
+            startAt: null,
             priority,
             difficulty,
             category,
