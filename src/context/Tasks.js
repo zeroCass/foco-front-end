@@ -49,6 +49,21 @@ export default TasksProvider = ({ children })  => {
                     ...state,
                     tasks: tasks
                 }
+            case 'initCountdown':
+                tasks = [...state.tasks]
+                tasks.forEach(task => {
+                    let until = task.initDate.getTime() - new Date().getTime()
+                    if (until < 0 && task.doneAt === null) {
+                        task.isActive = true
+                        Alert.alert(`Tarefa Iniciada!`, `A tarefa ${task.name} foi iniciada.`,[
+                            { text: 'OK' }
+                        ], { cancelable: true })
+                    }
+                })
+                return {
+                    ...state,
+                    tasks: tasks
+                }
             case 'doneTask':
                 tasks = [...state.tasks]
                 tasks.forEach(task => task.id === action.payload.id ? 

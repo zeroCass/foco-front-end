@@ -19,24 +19,46 @@ import { AuthContext } from '../../context/Auth'
 export default (props) => {
     const  { user } = useContext(AuthContext)
     const { state, dispatch } = useContext(TasksContext)
+
     // get only tasks that not belong a mission
     const tasks = state.tasks.filter(task => task.missionId === null ? true : false)
 
     // array of obj that contains all the seTimeout reference for each task
     let countdowns = []
+    let countdowns2init = []
     // const intervalRef = useRef([]) useReft is useless cause i dont want to keep the value
     
     // for each tasks, setup a personal timeout
     const setupCountdowns = () => {
         countdowns = tasks.map(task => {
-            const until = task.estimateDate.getTime() - new Date().getTime()
-            return setTimeout(() => dispatch({ type: 'expiredTask', payload: null }), until)
+            // pegar tasks que o init time < date now
+            if (task.initDate === null || (new Date().getTime() >= task.initDate.getTime())) {
+                const until = task.estimateDate.getTime() - new Date().getTime()
+                return setTimeout(() => dispatch({ type: 'expiredTask', payload: null }), until)
+            } 
+        })
+    }
+
+    const setupCountidowns2init = () => {
+        countdowns2init = tasks.map(task => {
+            if (task.initDate !== null) {
+                const until = task.initDate.getTime() - new Date().getTime()
+                return setTimeout(() => {
+                    dispatch({ type: 'initCountdown', payload: null })
+                    setupCountdowns() //call to setup the coutndown to expired
+                }, until)
+            }
         })
     }
 
     useEffect(() => {
+        console.log('re-render')
+        setupCountidowns2init()
         setupCountdowns()
-        return () => countdowns.forEach(elem => clearInterval(elem))
+        return () => {
+            countdowns2init.forEach(elem => clearInterval(elem))
+            countdowns.forEach(elem => clearInterval(elem))
+        }
     }, [tasks])
 
 

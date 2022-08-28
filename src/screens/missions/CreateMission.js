@@ -72,12 +72,13 @@ export default props => {
     const [modalVisibilty, setModalVisibility] = useState(false) 
     const [category, setCategory] = useState('')
     const [name, setName] = useState('')
+    const [selectedTasks, setSelectedTasks] = useState([])
     
-    //selectedTask passa a ser state
-    //onSave passa a adicionar tasks no selectedTask
-    //implementar botao de cancelar para sair da tela
+    const saveSelectedTask = (selectedTasks) => {
+        setSelectedTasks(selectedTasks)
+    }
 
-    const save = (selectedTasks) => {
+    const saveMission = () => {
         //calculate avarage time left
         //calculate avarage difficult
 
@@ -110,6 +111,11 @@ export default props => {
 
     return (
         <View>
+            <ModalList isVisible={modalVisibilty} 
+                onClose={() => setModalVisibility(false)} 
+                tasksCategory={category}
+                onSave={saveSelectedTask} 
+            />
             <TextInput
                 value={name}
                 label='Nome'
@@ -128,19 +134,24 @@ export default props => {
                 placeholder='Ex: Estudo, Trabalho, Domestica...'
                 activeOutlineColor='#6495ED'
             />
-            <ModalList isVisible={modalVisibilty} 
-                onClose={() => setModalVisibility(false)} 
-                tasksCategory={category}
-                onSave={save} 
-            />
-            <Text>Criar Missão</Text> 
+            {selectedTasks.length > 0 ?
+                selectedTasks.map((task) => {
+                    return (
+                        <View>
+                            <Text>{task.name}</Text>
+                        </View>
+                    )
+                }) : null}
             <Button
                 onPress={() => setModalVisibility(true)}
             >
                 Selecionar Tarefas
             </Button>
-            <Button>
+            <Button onPress={saveMission}>
                 Salvar
+            </Button>
+            <Button onPress={() => props.navigation.navigate('MissionList')}>
+                Cancelar
             </Button>
         </View>
     )

@@ -31,6 +31,8 @@ export default props => {
     const [desc, setDesc] = useState('')
     const [estimateDate, setEstimateDate] = useState(new Date())
     const [estimateTime, setEstimateTime] = useState(new Date())
+    const [initDate, setInitDate] = useState(null)
+    const [initTime, setInitTime] = useState(null)
     const [priority, setPriority] = useState(0)
     const [difficulty, setDifficulty] = useState(0)
     const [category, setCategory] = useState('')
@@ -38,20 +40,33 @@ export default props => {
     const stringDateFormated = moment(estimateDate).format('D[/]MMM[/]YY')
     const stringTimeFormated = moment(estimateTime).format('HH[:]mm')
 
+    const stringinitDateFormated = initDate ? moment(initDate).format('D[/]MMM[/]YY') : '__/___/__'
+    const stringinitTimeFormated = initTime ? moment(initTime).format('HH[:]mm') : '__:__ '
+
     const save = () => {
         // get the datetime setup
-        const date = setupDateTime()
+        const finalDate = setupDateTime(estimateTime, estimateDate)
+        const startDate = initTime && initDate ? setupDateTime(initTime, initDate) : null
+
         // returns if date is invalid
-        if (date <= new Date()) {
+        if (finalDate <= new Date()) {
             Alert.alert('Data inválida!', 'Forneça uma data válida',
                 [{ text: 'Ok' }], { cancelable: true })
             return 
         }
+        // returns if date is invalid
+        if (startDate !== null && startDate <= new Date()) {
+            Alert.alert('Data inválida!', 'Forneça uma data válida',
+                [{ text: 'Ok' }], { cancelable: true })
+            return 
+        }
+
         const newTask = {
             id: Math.random() * 1000,
             name,
             desc,
-            estimateDate: date,
+            estimateDate: finalDate,
+            initDate: startDate,
             doneAt: null,
             priority,
             difficulty,
@@ -59,8 +74,6 @@ export default props => {
             isActive: false,
             expired: false,
             missionId: null,
-            // countdown function setup a timeout with the time left until task expired
-            // countdown: (until) => setTimeout(() => dispatch({ type: 'expiredTask', payload: null }), until)
         }
         // call the dispatch
         dispatch({
@@ -73,7 +86,8 @@ export default props => {
     }
 
     // returns the date with the time setup
-    const setupDateTime = () => {
+    const setupDateTime = (estimateTime, estimateDate) => {
+        // alterar para eceber estimeTime e o estimateDate
         // convert the hours, minuts of the time to ms
         const time2Ms = 
             (estimateTime.getHours() * 3600 + estimateTime.getMinutes() * 60) * 1000
@@ -138,8 +152,31 @@ export default props => {
                         </View>
                     </View>
                     <View>
-                        <Text>Prazo</Text>
+                    <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text>Prazo Incial-Opicional</Text>
+                            <Button mode='contained' icon='clock-time-nine' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                                DateTimePickerAndroid.open({
+                                    value: initTime ? initTime : new Date(),
+                                    onChange: (_, time) => {
+                                        setInitTime(new Date(time))
+                                    },
+                                    is24Hour: true,
+                                    mode: 'time',
+                                })
+                            }} >{stringinitTimeFormated}</Button>
+                            <Button mode='contained' icon='calendar-range' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                                DateTimePickerAndroid.open({
+                                    value: initDate ? initDate : new Date(),
+                                    onChange: (_, date) => {
+                                        setInitDate(new Date(date))
+                                    },
+                                    mode: 'date',
+                                })
+                            }} >{stringinitDateFormated}</Button>
+                        </View>
+                    </View>
                         <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center' }}>
+                            <Text>Prazo Final</Text>
                             <Button mode='contained' icon='clock-time-nine' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
                                 DateTimePickerAndroid.open({
                                     value: estimateTime,
@@ -164,9 +201,7 @@ export default props => {
                     <Button onPress={save} >
                         Salvar
                     </Button>
-                    
                 </View>
-            </View>
     )
 }
 
