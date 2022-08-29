@@ -37,13 +37,15 @@ export default TasksProvider = ({ children })  => {
             case 'expiredTask':
                 tasks = [...state.tasks]
                 tasks.forEach(task => {
-                    let until = task.estimateDate.getTime() - new Date().getTime()
-                    if (until < 0 && task.doneAt === null && !task.expired) {
-                        task.expired = true
-                        task.isActive = false
-                        Alert.alert('Tarefa Expirada!', `A tarefa ${task.name} não foi concluída a tempo`,[
-                            { text: 'OK' }
-                        ], { cancelable: true })
+                    if (task.id === action.payload.id) {
+                        let until = task.estimateDate.getTime() - new Date().getTime()
+                        if (until < 0 && task.doneAt === null && !task.expired) {
+                            task.expired = true
+                            task.isActive = false
+                            Alert.alert('Tarefa Expirada!', `A tarefa ${task.name} não foi concluída a tempo`,[
+                                { text: 'OK' }
+                            ], { cancelable: true })
+                        }
                     }
                 })
                 return {
@@ -53,14 +55,16 @@ export default TasksProvider = ({ children })  => {
             case 'initCountdown':
                 tasks = [...state.tasks]
                 tasks.forEach(task => {
-                    let until = task.initDate.getTime() - new Date().getTime()
-                    if (until < 0 && task.doneAt === null && !task.isActive && !task.expired) {
-                        task.isActive = true
-                        task.startAt = new Date()
-                        Alert.alert(`Tarefa Iniciada!`, `A tarefa ${task.name} foi iniciada.`,[
-                            { text: 'OK' }
-                        ], { cancelable: true })
-                    }
+                    if (task.id === action.payload.id) {
+                        let until = task.initDate.getTime() - new Date().getTime()
+                        if (until < 0 && task.doneAt === null && !task.isActive && !task.expired) {
+                            task.isActive = true
+                            task.startAt = new Date()
+                            Alert.alert(`Tarefa Iniciada!`, `A tarefa ${task.name} foi iniciada.`,[
+                                { text: 'OK' }
+                            ], { cancelable: true })
+                        }
+                    }   
                 })
                 return {
                     ...state,
@@ -85,6 +89,18 @@ export default TasksProvider = ({ children })  => {
                         task.missionId = action.payload.missionId
                         console.log('setMission - task:', task.name) 
                     }  
+                })
+                return {
+                    ...state,
+                    tasks: tasks
+                }
+            case 'setDate2Null':
+                tasks = [...state.tasks]
+                tasks.forEach(task => {
+                    if (task.id === action.payload.id) {
+                        task.estimateDate = null
+                        task.initDate = null
+                    }
                 })
                 return {
                     ...state,

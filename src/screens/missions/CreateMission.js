@@ -1,6 +1,8 @@
 import React, { useContext, useState } from 'react'
-import { View, Text, StyleSheet, Modal, FlatList } from 'react-native'
+import { View, Text, StyleSheet, Modal, FlatList, Alert } from 'react-native'
 import { Button, TextInput } from 'react-native-paper'
+import { DateTimePickerAndroid} from '@react-native-community/datetimepicker'
+import moment from 'moment'
 
 import TouchableView from '../../components/TouchableView'
 import TaskSelectBox from '../../components/TaskSelectBox'
@@ -14,7 +16,9 @@ const ModalList = (props) => {
 
     const tasks = state.tasks.filter(task => {
         // get the tasks that has the same category and was not initialized and not missonid
-        return (task.category === props.tasksCategory && !task.isActive && task.missionId === null) 
+        // not done and not expired
+        return (task.category === props.tasksCategory && !task.isActive 
+                && task.missionId === null && !task.expired && !task.doneAt) 
     })
 
     // array with all selected tasks
@@ -73,24 +77,77 @@ export default props => {
     const [category, setCategory] = useState('')
     const [name, setName] = useState('')
     const [selectedTasks, setSelectedTasks] = useState([])
+    const [estimateDate, setEstimateDate] = useState(new Date())
+    const [estimateTime, setEstimateTime] = useState(new Date())
+    const [initDate, setInitDate] = useState(null)
+    const [initTime, setInitTime] = useState(null)
     
+    const stringDateFormated = moment(estimateDate).format('D[/]MMM[/]YY')
+    const stringTimeFormated = moment(estimateTime).format('HH[:]mm')
+
+    const stringinitDateFormated = initDate ? moment(initDate).format('D[/]MMM[/]YY') : '__/___/__'
+    const stringinitTimeFormated = initTime ? moment(initTime).format('HH[:]mm') : '__:__ '
+
+    // get the selectedTask returned by ModaList component and save as the new state
     const saveSelectedTask = (selectedTasks) => {
         setSelectedTasks(selectedTasks)
+    }
+
+    // returns the date with the time setup
+    const setupDateTime = (estimateTime, estimateDate) => {
+        // alterar para eceber estimeTime e o estimateDate
+        // convert the hours, minuts of the time to ms
+        const time2Ms = 
+            (estimateTime.getHours() * 3600 + estimateTime.getMinutes() * 60) * 1000
+        const dateMidnight = 
+            new Date(estimateDate.getFullYear(), estimateDate.getMonth(), estimateDate.getDate(), 0, 0, 0, 0).getTime()
+        return new Date(dateMidnight + time2Ms)
     }
 
     const saveMission = () => {
         //calculate avarage time left
         //calculate avarage difficult
 
+        // get the datetime setup
+        
+        if ((initDate && !initTime) || (initTime && !initDate)) {
+            Alert.alert('Data inválida!', 'Forneça uma incial data válida',
+                [{ text: 'Ok' }], { cancelable: true })
+            return 
+        }
+
+        const finalDate = setupDateTime(estimateTime, estimateDate)
+        const startDate = initDate && initTime ? setupDateTime(initTime, initDate) : null
+
+        // returns if date is invalid
+        if (finalDate <= new Date()) {
+            Alert.alert('Data inválida!', 'Forneça uma data válida',
+                [{ text: 'Ok' }], { cancelable: true })
+            return 
+        }
+        // returns if date is invalid
+        if (startDate !== null && startDate <= new Date()) {
+            Alert.alert('Data inválida!', 'Forneça uma data válida',
+                [{ text: 'Ok' }], { cancelable: true })
+            return 
+        }
+
         const mission = {
             id: Math.random() * 1000,
             name,
+            estimateDate: finalDate,
+            initDate: startDate,
+            doneAt: null,
+            startAt: null,
+            isActive: false,
+            expired: false,
             category,
             // difficult,
             tasks: selectedTasks,
         }
 
         // set task id for each task in the mission array
+        // setNull2Date for each task (reset date status)
         selectedTasks.forEach(sTask => {
             state.tasks.forEach(task => {
                 if (task.id === sTask.id) {
@@ -99,6 +156,12 @@ export default props => {
                         payload: {
                             id: task.id,
                             missionId: mission.id
+                        }
+                    })
+                    dispatch({
+                        type: 'setNull2Date',
+                        payload: {
+                            id: task.id
                         }
                     })
                 } 
@@ -147,6 +210,50 @@ export default props => {
             >
                 Selecionar Tarefas
             </Button>
+            <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center' }}>
+                <Text>Prazo Incial-Opicional</Text>
+                <Button mode='contained' icon='clock-time-nine' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                    DateTimePickerAndroid.open({
+                        value: initTime ? initTime : new Date(),
+                        onChange: (_, time) => {
+                            setInitTime(new Date(time))
+                        },
+                        is24Hour: true,
+                        mode: 'time',
+                    })
+                }} >{stringinitTimeFormated}</Button>
+                <Button mode='contained' icon='calendar-range' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                    DateTimePickerAndroid.open({
+                        value: initDate ? initDate : new Date(),
+                        onChange: (_, date) => {
+                            setInitDate(new Date(date))
+                        },
+                        mode: 'date',
+                    })
+                }} >{stringinitDateFormated}</Button>
+            </View>
+            <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center' }}>
+                <Text>Prazo Final</Text>
+                <Button mode='contained' icon='clock-time-nine' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                    DateTimePickerAndroid.open({
+                        value: estimateTime,
+                        onChange: (_, time) => {
+                            setEstimateTime(new Date(time))
+                        },
+                        is24Hour: true,
+                        mode: 'time',
+                    })
+                }} >{stringTimeFormated}</Button>
+                <Button mode='contained' icon='calendar-range' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                    DateTimePickerAndroid.open({
+                        value: estimateDate,
+                        onChange: (_, date) => {
+                            setEstimateDate(new Date(date))
+                        },
+                        mode: 'date',
+                    })
+                }} >{stringDateFormated}</Button>
+            </View>
             <Button onPress={saveMission}>
                 Salvar
             </Button>

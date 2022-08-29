@@ -39,17 +39,14 @@ export default (props) => {
         // Se o resultado for UNDEFINED (n tem), 
         //entao adiioncar um obj contendo CT e o ID da task no array de COUTNDOWN
         tasks.forEach(task => {
-            let [taskNotCt] = countdowns.filter(ct => {
-                return ct.id === task.id ? true : false
-            })
-
-            if (!taskNotCt) {
+            const found = countdowns.find(ct => ct.id === task.id)
+            if (!found) {
                 // pegar tasks que o init time < date now
                 if ((!task.expired && task.doneAt === null) && 
                     (task.initDate === null || (new Date().getTime() >= task.initDate.getTime()))) {
                     const until = task.estimateDate.getTime() - new Date().getTime()
                     auxCountdowns.push({
-                        timeout: setTimeout(() => dispatch({ type: 'expiredTask', payload: null }), until),
+                        timeout: setTimeout(() => dispatch({ type: 'expiredTask', payload: {id: task.id }}), until),
                         id: task.id,
                     })
                 } 
@@ -67,7 +64,7 @@ export default (props) => {
                 (task.initDate !== null && task.initDate.getTime() > new Date().getTime())) {
                 const until = task.initDate.getTime() - new Date().getTime()
                 return setTimeout(() => {
-                    dispatch({ type: 'initCountdown', payload: null })
+                    dispatch({ type: 'initCountdown', payload: { id: task.id } })
                     setupCountdowns() //call to setup the coutndown to expired
                 }, until)
             }

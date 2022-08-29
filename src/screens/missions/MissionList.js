@@ -7,6 +7,8 @@ export default props => {
 
     const [missions, setMissions] = useState([])
 
+    // the mission obj is recieve by params
+    // everytime the params changed, rerender the component
     useEffect(() => {
         if (props.route.params) {
             const mission = JSON.parse(props.route.params)

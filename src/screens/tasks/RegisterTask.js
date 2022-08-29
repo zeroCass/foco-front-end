@@ -45,8 +45,15 @@ export default props => {
 
     const save = () => {
         // get the datetime setup
+        
+        if ((initDate && !initTime) || (initTime && !initDate)) {
+            Alert.alert('Data inválida!', 'Forneça uma incial data válida',
+                [{ text: 'Ok' }], { cancelable: true })
+            return 
+        }
+
         const finalDate = setupDateTime(estimateTime, estimateDate)
-        const startDate = initTime && initDate ? setupDateTime(initTime, initDate) : null
+        const startDate = initDate && initTime ? setupDateTime(initTime, initDate) : null
 
         // returns if date is invalid
         if (finalDate <= new Date()) {
