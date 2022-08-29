@@ -6,7 +6,9 @@ import moment from 'moment'
 
 import TouchableView from '../../components/TouchableView'
 import TaskSelectBox from '../../components/TaskSelectBox'
+
 import { TasksContext } from '../../context/Tasks'
+import { MissionsContext } from '../../context/Missions'
 
 const ModalList = (props) => {
 
@@ -73,6 +75,8 @@ const ModalList = (props) => {
 export default props => {
 
     const { state, dispatch } = useContext(TasksContext)
+    const { dispatch: dispacthMission } = useContext(MissionsContext)
+
     const [modalVisibilty, setModalVisibility] = useState(false) 
     const [category, setCategory] = useState('')
     const [name, setName] = useState('')
@@ -167,9 +171,15 @@ export default props => {
                 } 
             })
         })
-        //convert data to json to pass through screen (navigation)
-        const missionJSON = JSON.stringify(mission)
-        props.navigation.navigate('MissionList', missionJSON)
+       
+        dispacthMission({
+            type: 'addMission',
+            payload: mission
+        })  
+        props.navigation.navigate('MissionList')
+         //convert data to json to pass through screen (navigation)
+        // const missionJSON = JSON.stringify(mission)
+        // props.navigation.navigate('MissionList', missionJSON)
     }
 
     return (

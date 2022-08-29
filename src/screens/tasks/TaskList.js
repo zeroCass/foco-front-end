@@ -122,7 +122,7 @@ export default (props) => {
                         icon='plus-circle'
                         size={50}
                         color='blue'
-                        onPress={() => props.navigation.navigate('RegisterTask')}
+                        onPress={() => props.navigation.navigate('CreateTask')}
                     />
                 </View>
             </View>
