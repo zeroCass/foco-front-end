@@ -97,19 +97,6 @@ export default (props) => {
         }, []))
 
 
-
-    // const startTask = taskID => {
-    //     let currentTasks = [...tasks]
-    //     currentTasks.forEach(task => task.id === taskID ? task.isActive = true : task.isActive)
-    //     setTasks(currentTasks)
-    // }
-
-    // const stopTask = taskID => {
-    //     let currentTasks = [...tasks]
-    //     currentTasks.forEach(task => task.id === taskID ? task.isActive = false : task.isActive)
-    //     setTasks(currentTasks)
-    // }
-
     return (
             <View style={styles.container}>
                 <FlatList

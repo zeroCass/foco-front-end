@@ -82,6 +82,7 @@ export default props => {
             isActive: false,
             expired: false,
             missionId: null,
+            completition: 0,
         }
         // call the dispatch
         dispatch({

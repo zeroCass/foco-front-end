@@ -12,6 +12,8 @@ import CountDownTimer from '../../components/CountDownTimer'
 // check which button (iniciar, finalizar ou finalizado) should be displayed
 import RenderButton from '../../components/RenderButton'
 
+import TaskSelectList from '@components/TaskSelectList'
+
 export default props => {
     const { dispatch } = useContext(MissionsContext)
     const stringDateFormated = moment(props.estimateDate).format('HH[:]mm D[/]MMM[/]YY')
@@ -34,6 +36,12 @@ export default props => {
                     <Text>Prioridade: {props.priority}</Text>
                     <Text>Dificuldade: {props.difficulty}</Text>
                     <Text>Prazo: {stringDateFormated}</Text>
+                    <View style={{ margin: 20, padding: 20, borderColor: '#000', borderWidth: 2, }} >
+                        <Text>Tarefas:</Text>
+                        {props.tasks.map(task => {
+                            return <TaskSelectList {...task} />
+                        })}
+                    </View>
                     {props.isActive && !props.expired && props.doneAt === null ? <CountDownTimer until={until} />: null}
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
                         {<RenderButton {...props} dispatch={dispatch} type={'Mission'} />}

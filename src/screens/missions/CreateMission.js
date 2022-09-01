@@ -148,6 +148,7 @@ export default props => {
             category,
             // difficult,
             tasks: selectedTasks,
+            completition: 0,
         }
 
         // set task id for each task in the mission array

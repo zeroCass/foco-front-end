@@ -30,49 +30,49 @@ export default props => {
     let countdowns = []
     let countdowns2init = []
 
-        // for each missions, setup a personal timeout
-        const setupCountdowns = () => {
-            // cria array aux
-            const auxCountdowns = [...countdowns]
-    
-            // para cada task, realizar filtro para verificar se ja existe um CT para ela
-            // Se o resultado for UNDEFINED (n tem), 
-            //entao adiioncar um obj contendo CT e o ID da task no array de COUTNDOWN
-            missions.forEach(mission => {
-                const found = countdowns.find(ct => ct.id === mission.id)
-                if (!found) {
-                    // pegar missions que o init time < date now
-                    if ((!mission.expired && mission.doneAt === null) && 
-                        (mission.initDate === null || (new Date().getTime() >= mission.initDate.getTime()))) {
-                        const until = mission.estimateDate.getTime() - new Date().getTime()
-                        auxCountdowns.push({
-                            timeout: setTimeout(() => dispatch({ type: 'expiredMission', payload: {id: mission.id }}), until),
-                            id: mission.id,
-                        })
-                    } 
-                }
-            })
-            countdowns = auxCountdowns
-            // if (newCountdown.length != countdowns.length)
-            //     setCountdowns(newCountdown)
-            
-        }
-    
-        const setupCountidowns2init = () => {
-            const auxCountdowns2init = missions.map(mission => {
+    // for each missions, setup a personal timeout
+    const setupCountdowns = () => {
+        // cria array aux
+        const auxCountdowns = [...countdowns]
+
+        // para cada task, realizar filtro para verificar se ja existe um CT para ela
+        // Se o resultado for UNDEFINED (n tem), 
+        //entao adiioncar um obj contendo CT e o ID da task no array de COUTNDOWN
+        missions.forEach(mission => {
+            const found = countdowns.find(ct => ct.id === mission.id)
+            if (!found) {
+                // pegar missions que o init time < date now
                 if ((!mission.expired && mission.doneAt === null) && 
-                    (mission.initDate !== null && mission.initDate.getTime() > new Date().getTime())) {
-                    const until = mission.initDate.getTime() - new Date().getTime()
-                    return setTimeout(() => {
-                        dispatch({ type: 'initCountdown', payload: { id: mission.id } })
-                        setupCountdowns() //call to setup the coutndown to expired
-                    }, until)
-                }
-            })
-            countdowns2init = auxCountdowns2init
-            // if (auxCountdowns2init.length != countdowns2init.length)
-            //     setCountdowns2init(auxCountdowns2init)
-        }
+                    (mission.initDate === null || (new Date().getTime() >= mission.initDate.getTime()))) {
+                    const until = mission.estimateDate.getTime() - new Date().getTime()
+                    auxCountdowns.push({
+                        timeout: setTimeout(() => dispatch({ type: 'expiredMission', payload: {id: mission.id }}), until),
+                        id: mission.id,
+                    })
+                } 
+            }
+        })
+        countdowns = auxCountdowns
+        // if (newCountdown.length != countdowns.length)
+        //     setCountdowns(newCountdown)
+        
+    }
+
+    const setupCountidowns2init = () => {
+        const auxCountdowns2init = missions.map(mission => {
+            if ((!mission.expired && mission.doneAt === null) && 
+                (mission.initDate !== null && mission.initDate.getTime() > new Date().getTime())) {
+                const until = mission.initDate.getTime() - new Date().getTime()
+                return setTimeout(() => {
+                    dispatch({ type: 'initCountdown', payload: { id: mission.id } })
+                    setupCountdowns() //call to setup the coutndown to expired
+                }, until)
+            }
+        })
+        countdowns2init = auxCountdowns2init
+        // if (auxCountdowns2init.length != countdowns2init.length)
+        //     setCountdowns2init(auxCountdowns2init)
+    }
 
 
     return (

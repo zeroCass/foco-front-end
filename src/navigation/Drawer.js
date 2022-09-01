@@ -11,7 +11,7 @@ import BottomTab from './BottomTab'
 
 import TaskList from '../screens/tasks/TaskList'
 import Perfil from '../screens/Perfil'
-import Shop from '../screens/Shop'
+import Shop from '../screens/shop/Shop'
 
 
 const Drawer = createDrawerNavigator()
