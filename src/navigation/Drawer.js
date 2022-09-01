@@ -32,8 +32,8 @@ export default () => {
                 drawerContent={(props) => <CustomDrawer {...props} />}
             >
                 <Drawer.Screen name='Home' component={BottomTab}
-                    options={({ navigation }) => {
-                        return { headerTitleAlign: 'center', title: 'Tarefas' }
+                    options={({ route }) => {
+                        return { headerTitleAlign: 'center', title: route.params ? route.params.params.name: 'Tarefas' }
                         }}
                 />
                 <Drawer.Screen name='Perfil'component={Perfil}

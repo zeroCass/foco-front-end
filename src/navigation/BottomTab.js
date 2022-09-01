@@ -19,8 +19,28 @@ const Info = () => {
 export default (props) => {
     return (
         <Tab.Navigator>
-            <Tab.Screen name='TaskList' component={TaskList} options={{ headerShown: false }}/>
-            <Tab.Screen name='MissionList' component={MissionList} options={{ headerShown: false }}/>
+            <Tab.Screen name='Tarefas' component={TaskList} 
+                options={{ headerShown: false }}
+                listeners={({ route, navigation }) => {
+                    return {
+                        tabPress: (e) => {
+                            e.preventDefault()
+                            navigation.navigate('Home', { screen: 'Tarefas', params: { name: 'Tarefas' } })
+                        }
+                    }
+                }}
+            />
+            <Tab.Screen name='Missões' component={MissionList} 
+                options={{ headerShown: false }}
+                listeners={({ route, navigation }) => {
+                    return {
+                        tabPress: (e) => {
+                            e.preventDefault()
+                            navigation.navigate('Home', { screen: 'Missões', params: { name: 'Missões' } })
+                        }
+                    }
+                }}
+            />
         </Tab.Navigator>
     )
 }
