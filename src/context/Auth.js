@@ -1,4 +1,4 @@
-import React, { createContext, useState } from 'react'
+import React, { createContext, useReducer } from 'react'
 
 export const AuthContext = createContext({})
 const initialState = {
@@ -8,10 +8,23 @@ const initialState = {
 }
 
 export default AuthProvider = ({ children }) => {
-    const [user, setUser] = useState(initialState)
+    // const [user, setUser] = useState(initialState)
+    const reducer = (user, action) => {
+        switch(action.type){
+            case 'setAuth':
+                return {
+                    ...user,
+                    auth: true
+                }
+            default: 
+                return user
+        }
+    }
+
+    const [user, dispatch] = useReducer(reducer, initialState)
 
     return (
-        <AuthContext.Provider value={{ user, setUser }}>
+        <AuthContext.Provider value={{ user, dispatch }}>
             {children}
         </AuthContext.Provider>
 

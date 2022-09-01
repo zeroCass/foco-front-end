@@ -184,102 +184,118 @@ export default props => {
     }
 
     return (
-        <View>
-            <ModalList isVisible={modalVisibilty} 
-                onClose={() => setModalVisibility(false)} 
-                tasksCategory={category}
-                onSave={saveSelectedTask} 
-            />
-            <TextInput
-                value={name}
-                label='Nome'
-                onChangeText={(name) => setName(name)}
-                mode='outlined'
-                outlineColor='#6495ED'
-                placeholder='Nome da Missão'
-                activeOutlineColor='#6495ED'
-            />
-            <TextInput
-                value={category}
-                label='Categoria'
-                onChangeText={(category) => setCategory(category)}
-                mode='outlined'
-                outlineColor='#6495ED'
-                placeholder='Ex: Estudo, Trabalho, Domestica...'
-                activeOutlineColor='#6495ED'
-            />
-            {selectedTasks.length > 0 ?
-                selectedTasks.map((task) => {
-                    return (
-                        <View>
-                            <Text>{task.name}</Text>
-                        </View>
-                    )
-                }) : null}
-            <Button
-                onPress={() => setModalVisibility(true)}
-            >
-                Selecionar Tarefas
-            </Button>
-            <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>Prazo Incial-Opicional</Text>
-                <Button mode='contained' icon='clock-time-nine' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
-                    DateTimePickerAndroid.open({
-                        value: initTime ? initTime : new Date(),
-                        onChange: (_, time) => {
-                            setInitTime(new Date(time))
-                        },
-                        is24Hour: true,
-                        mode: 'time',
-                    })
-                }} >{stringinitTimeFormated}</Button>
-                <Button mode='contained' icon='calendar-range' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
-                    DateTimePickerAndroid.open({
-                        value: initDate ? initDate : new Date(),
-                        onChange: (_, date) => {
-                            setInitDate(new Date(date))
-                        },
-                        mode: 'date',
-                    })
-                }} >{stringinitDateFormated}</Button>
+        <View style={{ flex: 1, padding: 20 }} >
+            <View style={styles.container}>
+                <ModalList isVisible={modalVisibilty} 
+                    onClose={() => setModalVisibility(false)} 
+                    tasksCategory={category}
+                    onSave={saveSelectedTask} 
+                />
+                <TextInput
+                    value={name}
+                    label='Nome'
+                    onChangeText={(name) => setName(name)}
+                    mode='outlined'
+                    outlineColor='#6495ED'
+                    placeholder='Nome da Missão'
+                    activeOutlineColor='#6495ED'
+                />
+                <TextInput
+                    value={category}
+                    label='Categoria'
+                    onChangeText={(category) => setCategory(category)}
+                    mode='outlined'
+                    outlineColor='#6495ED'
+                    placeholder='Ex: Estudo, Trabalho, Domestica...'
+                    activeOutlineColor='#6495ED'
+                />
+                <View style={{ alignItems: 'center', margin: 10 }} >
+                    <Text style={{ fontWeight: 'bold', fontSize: 20 }} >Tarefas:</Text>
+                    {selectedTasks.length > 0 ?
+                        selectedTasks.map((task) => {
+                            return (
+                                <View>
+                                    <Text style={{ fontWeight: 'bold', fontSize: 15 }} >{task.name}</Text>
+                                </View>
+                            )
+                        }) : null}
+                </View>
+                <Button
+                    type='text'
+                    onPress={() => setModalVisibility(true)}
+                    style={{ marginBottom: 20}}
+                    color='#104FB6'
+                >
+                    Selecionar Tarefas
+                </Button>
+                <View style={{ alignItems: 'center' }} >
+                    <Text>Prazo Incial(Opicional)</Text>
+                    <View style={styles.dateView}>
+                        <Button mode='contained' icon='clock-time-nine' style={styles.dateButton} onPress={() => {
+                            DateTimePickerAndroid.open({
+                                value: initTime ? initTime : new Date(),
+                                onChange: (_, time) => {
+                                    setInitTime(new Date(time))
+                                },
+                                is24Hour: true,
+                                mode: 'time',
+                            })
+                        }} >{stringinitTimeFormated}</Button>
+                        <Button mode='contained' icon='calendar-range' style={styles.dateButton} onPress={() => {
+                            DateTimePickerAndroid.open({
+                                value: initDate ? initDate : new Date(),
+                                onChange: (_, date) => {
+                                    setInitDate(new Date(date))
+                                },
+                                mode: 'date',
+                            })
+                        }} >{stringinitDateFormated}</Button>
+                    </View>
+                </View>
+                <View style={{ alignItems: 'center' }} >
+                    <Text>Prazo Final</Text>
+                    <View style={styles.dateView}>
+                        <Button mode='contained' icon='clock-time-nine' style={styles.dateButton} onPress={() => {
+                            DateTimePickerAndroid.open({
+                                value: estimateTime,
+                                onChange: (_, time) => {
+                                    setEstimateTime(new Date(time))
+                                },
+                                is24Hour: true,
+                                mode: 'time',
+                            })
+                        }} >{stringTimeFormated}</Button>
+                        <Button mode='contained' icon='calendar-range' style={styles.dateButton} onPress={() => {
+                            DateTimePickerAndroid.open({
+                                value: estimateDate,
+                                onChange: (_, date) => {
+                                    setEstimateDate(new Date(date))
+                                },
+                                mode: 'date',
+                            })
+                        }} >{stringDateFormated}</Button>
+                    </View>
+                </View>
             </View>
-            <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center' }}>
-                <Text>Prazo Final</Text>
-                <Button mode='contained' icon='clock-time-nine' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
-                    DateTimePickerAndroid.open({
-                        value: estimateTime,
-                        onChange: (_, time) => {
-                            setEstimateTime(new Date(time))
-                        },
-                        is24Hour: true,
-                        mode: 'time',
-                    })
-                }} >{stringTimeFormated}</Button>
-                <Button mode='contained' icon='calendar-range' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
-                    DateTimePickerAndroid.open({
-                        value: estimateDate,
-                        onChange: (_, date) => {
-                            setEstimateDate(new Date(date))
-                        },
-                        mode: 'date',
-                    })
-                }} >{stringDateFormated}</Button>
+            <View style={{ justifyContent: 'center', alignItems: 'center' }} >
+                <Button 
+                    mode='contained'
+                    onPress={saveMission}
+                    style={{ borderRadius: 25, width: '25%', backgroundColor: '#104FB6' }} 
+                >
+                    Salvar
+                </Button>
             </View>
-            <Button onPress={saveMission}>
-                Salvar
-            </Button>
-            <Button onPress={() => props.navigation.navigate('MissionList')}>
-                Cancelar
-            </Button>
         </View>
     )
 }
 
 const styles = StyleSheet.create({
     container: {
-        width: '95%',
+        flex: 1,
+        backgroundColor: '#FFF',
+        padding: 20,
         justifyContent: 'center',
-        alignItems: 'center',
     },
     centerView: {
         height: '85%',
@@ -288,6 +304,21 @@ const styles = StyleSheet.create({
     contentView: {
         backgroundColor: '#FFF',
         flex: 8,
-    }
+    },
+    selectedBox: {
+        flexDirection: 'row', 
+        justifyContent: 'space-between',
+        padding: 20,
+    },
+    dateView: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'center',
+    },
+    dateButton: {
+        margin: 10, 
+        borderRadius: 25,
+        backgroundColor: '#1081B6',
+    },
 })
 

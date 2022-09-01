@@ -107,8 +107,8 @@ export default props => {
 
 
     return (
-            <View style={{ flex: 1 }}>
-                 <View style={styles.container}>
+            <View style={styles.container}>
+                <View style={styles.centerView}>
                     <TextInput
                         value={name}
                         label='Nome'
@@ -138,8 +138,8 @@ export default props => {
                         numberOfLines={2}
                         multiline={true}
                     />
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', padding: 20 }}>
-                        <View>
+                    <View style={styles.selectedBox}>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }} >
                             <Text>Prioridade</Text>
                             <RadioForm
                                 radio_props={priorityOptions}
@@ -149,7 +149,7 @@ export default props => {
                                 labelHorizontal={false}
                             />
                         </View>
-                        <View>
+                        <View style={{ justifyContent: 'center', alignItems: 'center' }} >
                             <Text>Dificuldade</Text>
                             <RadioForm
                                 radio_props={difficultyOptions}
@@ -161,9 +161,10 @@ export default props => {
                         </View>
                     </View>
                     <View>
-                    <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text>Prazo Incial-Opicional</Text>
-                            <Button mode='contained' icon='clock-time-nine' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                    <View style={{ alignItems: 'center' }} >
+                        <Text>Prazo Incial(Opicional)</Text>
+                        <View style={styles.dateView}>
+                            <Button mode='contained' icon='clock-time-nine' style={styles.dateButton} onPress={() => {
                                 DateTimePickerAndroid.open({
                                     value: initTime ? initTime : new Date(),
                                     onChange: (_, time) => {
@@ -173,7 +174,7 @@ export default props => {
                                     mode: 'time',
                                 })
                             }} >{stringinitTimeFormated}</Button>
-                            <Button mode='contained' icon='calendar-range' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                            <Button mode='contained' icon='calendar-range' style={styles.dateButton} onPress={() => {
                                 DateTimePickerAndroid.open({
                                     value: initDate ? initDate : new Date(),
                                     onChange: (_, date) => {
@@ -184,9 +185,12 @@ export default props => {
                             }} >{stringinitDateFormated}</Button>
                         </View>
                     </View>
-                        <View style={{ flexDirection: 'row', padding: 20, alignItems: 'center', justifyContent: 'center' }}>
-                            <Text>Prazo Final</Text>
-                            <Button mode='contained' icon='clock-time-nine' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                    
+                    </View>
+                    <View style={{ alignItems: 'center' }} >
+                        <Text>Prazo Final</Text>
+                        <View style={styles.dateView}>
+                            <Button mode='contained' icon='clock-time-nine' style={styles.dateButton} onPress={() => {
                                 DateTimePickerAndroid.open({
                                     value: estimateTime,
                                     onChange: (_, time) => {
@@ -196,7 +200,7 @@ export default props => {
                                     mode: 'time',
                                 })
                             }} >{stringTimeFormated}</Button>
-                            <Button mode='contained' icon='calendar-range' style={{ margin: 10, borderRadius: 25 }} onPress={() => {
+                            <Button mode='contained' icon='calendar-range' style={styles.dateButton} onPress={() => {
                                 DateTimePickerAndroid.open({
                                     value: estimateDate,
                                     onChange: (_, date) => {
@@ -207,9 +211,16 @@ export default props => {
                             }} >{stringDateFormated}</Button>
                         </View>
                     </View>
-                    <Button onPress={save} >
-                        Salvar
-                    </Button>
+                    </View>
+                    <View style={{ justifyContent: 'center', alignItems: 'center' }} >
+                        <Button 
+                            mode='contained' 
+                            onPress={save}
+                            style={{ borderRadius: 25, width: '25%', backgroundColor: '#104FB6' }} 
+                        >
+                            Salvar
+                        </Button>
+                    </View>
                 </View>
     )
 }
@@ -219,5 +230,25 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#FFF',
         padding: 20,
+    },
+    centerView: {
+        flex: 1,
+        padding: 20,
+        // justifyContent: 'center',
+    },
+    dateButton: {
+        margin: 10, 
+        borderRadius: 25,
+        backgroundColor: '#1081B6',
+    },
+    selectedBox: {
+        flexDirection: 'row', 
+        justifyContent: 'space-between',
+        padding: 20,
+    },
+    dateView: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        justifyContent: 'center',
     },
 })
