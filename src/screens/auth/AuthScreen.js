@@ -1,9 +1,10 @@
-import React, { useContext, useState } from 'react'
-import { View, StyleSheet } from 'react-native'
+import React, { useContext, useState, useEffect } from 'react'
+import { View, StyleSheet, Text } from 'react-native'
 import { TextInput, Button } from 'react-native-paper'
 import { TextInputMask } from 'react-native-masked-text'
 
 import { AuthContext } from '@context/Auth'
+import { ContinousBaseGesture } from 'react-native-gesture-handler/lib/typescript/handlers/gestures/gesture'
 
 export default (props) => {
     const { user, dispatch } = useContext(AuthContext)
@@ -15,7 +16,26 @@ export default (props) => {
     const [birthday, setBirthday] = useState(null)
     const [godfather, setGodfather] = useState(null)
     const [newUser, setNewUser] = useState(false)
+    const [age, setAge] = useState(null)
+    
+    useEffect(() => {
+        setAge(getAge())
+    }, [birthday])
 
+
+    const getAge = () => {  
+        if (birthday && birthday.length === 10) {
+            let today = new Date();
+            let birthDate = birthday.split('/')
+            birthDate = new Date(birthDate[2], birthDate[1]-1, birthDate[0])
+            let age = today.getFullYear() - birthDate.getFullYear();
+            let m = today.getMonth() - birthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+                age--;
+            }
+            return age;
+        }
+    }
 
     return (
         <View style={styles.container}>
@@ -71,7 +91,9 @@ export default (props) => {
                 <TextInput
                     value={birthday}
                     label='Data de Nascimento'
-                    onChangeText={(birthday) => setBirthday(birthday)}
+                    onChangeText={(birthday) => { 
+                        setBirthday(birthday)
+                    }}
                     mode='outlined'
                     outlineColor='#6495ED'
                     placeholder='dd/mm/aaaa'
@@ -84,16 +106,26 @@ export default (props) => {
                             options={{
                                 mask:'99/99/9999'
                             }}
-                            
+                            // ref={(ref) => ageRef.current = ref}
                         />
                     }
                 /> 
                 }
-                <Button onPress={() =>  dispatch({
-                    type: 'setAuth',
-                    payload: null
-                })} >LOGIN</Button>
-                <Button onPress={() => setNewUser(!newUser) } >REGISTRE-SE</Button>
+                {age >= 16 ? <Text>Maior de IDADE</Text> : 
+                age < 16 ? <Text>Menor de IDADE</Text> : null}
+                {!newUser 
+                    ?  <Button onPress={() =>  dispatch({
+                        type: 'setAuth',
+                        payload: null
+                    })} >LOGIN</Button>
+                    : <Button onPress={() =>  dispatch({
+                        type: 'setAuth',
+                        payload: null
+                    })} >REGISTRAR-SE</Button>}   
+                {!newUser
+                ?  <Button onPress={() => setNewUser(!newUser) } >REGISTRE-SE</Button>
+                :  <Button onPress={() => setNewUser(!newUser) } >JÁ POSSUO CONTA</Button>} 
+                
             </View>
         </View>
     )
