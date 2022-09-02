@@ -50,20 +50,23 @@ const ModalList = (props) => {
             <View style={styles.centerView}>
                 <TouchableView {...props} />
                 <View style={styles.contentView}>
-                    <View>
-                        <Text>Tarefas com categoria: {props.tasksCategory}</Text>
+                    <View style={{ flex: 1, backgroundColor: '#FFF' }}>
+                        <View style={styles.titileContainer}>
+                            <Text style={styles.title}>Tarefas com categoria:</Text>
+                            <Text style={styles.title}>{props.tasksCategory}</Text>
+                        </View>
+                        <FlatList
+                            data={tasks}
+                            keyExtractor={item => `${item.id}`}
+                            renderItem={({ item }) => <TaskSelectBox {...item} onPress={selectedTasksID} />}
+                        />
+                        <Button onPress={() => {
+                            props.onSave(selectedTasks)
+                            props.onClose()
+                        }} >
+                            Salvar
+                        </Button>
                     </View>
-                    <FlatList
-                        data={tasks}
-                        keyExtractor={item => `${item.id}`}
-                        renderItem={({ item }) => <TaskSelectBox {...item} onPress={selectedTasksID} />}
-                    />
-                    <Button onPress={() => {
-                        props.onSave(selectedTasks)
-                        props.onClose()
-                    }} >
-                        Salvar
-                    </Button>
                 </View>
                 <TouchableView {...props} />
             </View>
@@ -136,6 +139,16 @@ export default props => {
             return 
         }
 
+        // if (selectedTasks.length < 2) {
+        //     Alert.alert('Erro ao criar Missão', 'A missão deve conter ao menos duas tarefas',
+        //         [{ text: 'Ok' }], { cancelable: true })
+        //     return 
+        // }
+
+        //calculate avarage difficult
+        const difficultyAvg = Math.floor(selectedTasks.reduce((sum, task) => sum + task.difficulty, 0) / selectedTasks.length)
+        const priorityAvg = Math.floor(selectedTasks.reduce((sum, task) => sum + task.priority, 0) / selectedTasks.length) 
+
         const mission = {
             id: Math.random() * 1000,
             name,
@@ -146,7 +159,8 @@ export default props => {
             isActive: false,
             expired: false,
             category,
-            // difficult,
+            difficulty: difficultyAvg,
+            priority: priorityAvg,
             tasks: selectedTasks,
             completition: 0,
         }
@@ -177,14 +191,14 @@ export default props => {
             type: 'addMission',
             payload: mission
         })  
-        props.navigation.navigate('MissionList')
+        props.navigation.navigate('Missões')
          //convert data to json to pass through screen (navigation)
         // const missionJSON = JSON.stringify(mission)
         // props.navigation.navigate('MissionList', missionJSON)
     }
 
     return (
-        <View style={{ flex: 1, padding: 20 }} >
+        <View style={{ flex: 1, backgroundColor: '#FFF', padding: 20 }} >
             <View style={styles.container}>
                 <ModalList isVisible={modalVisibilty} 
                     onClose={() => setModalVisibility(false)} 
@@ -214,7 +228,7 @@ export default props => {
                     {selectedTasks.length > 0 ?
                         selectedTasks.map((task) => {
                             return (
-                                <View>
+                                <View key={task.id} >
                                     <Text style={{ fontWeight: 'bold', fontSize: 15 }} >{task.name}</Text>
                                 </View>
                             )
@@ -281,7 +295,7 @@ export default props => {
                 <Button 
                     mode='contained'
                     onPress={saveMission}
-                    style={{ borderRadius: 25, width: '25%', backgroundColor: '#104FB6' }} 
+                    style={{ borderRadius: 25, width: '25%', backgroundColor: '#6e37af' }} 
                 >
                     Salvar
                 </Button>
@@ -318,7 +332,21 @@ const styles = StyleSheet.create({
     dateButton: {
         margin: 10, 
         borderRadius: 25,
-        backgroundColor: '#1081B6',
+        backgroundColor: '#8e47e1',
+    },
+    titileContainer:{
+        width: '100%',
+        alignItems:'center',
+        justifyContent: 'center',
+        backgroundColor: '#AAA'
+    },
+    title: {
+        fontWeight: 'bold',
+        fontSize: 20,
+        color: '#000',
+    },
+    infoContainer: {
+        padding: 20,
     },
 })
 

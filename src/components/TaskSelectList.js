@@ -1,33 +1,28 @@
 import React, { useState, useEffect, useContext } from 'react'
 import { View, Text, StyleSheet, TouchableOpacity} from 'react-native'
 
+
 import { TasksContext } from '@context/Tasks'
 
-export default props => {
-    const { dispatch } = useContext(TasksContext)
-    const [isDone, setIsDone] = useState(false)
-    const checkStyle = isDone ? { backgroundColor: 'green' } : null
+import DotTask from '@components/DotTask'
 
+export default props => {
+    const { dispatch, state: { tasks } } = useContext(TasksContext)
     const setDone = () => {
-        dispatch({
-            type: 'toggleDoneAt',
-            payload: {
-                id: props.id
-            }
-        })
-        setIsDone(!isDone)
+        if (props.mission.isActive) {
+            dispatch({
+                type: 'toggleDoneAt',
+                payload: {
+                    id: props.id
+                }
+            })
+            // setIsDone(!isDone)
+        }
     }
 
     return (
         <TouchableOpacity onPress={setDone} >
-            <View style={styles.container} >
-                <View style={styles.checkContainer}>
-                    <View style={[styles.check, checkStyle]} />
-                </View>
-                <View style={styles.txtContainer} >
-                    <Text>{props.name}</Text>
-                </View>
-            </View>
+            <DotTask {...props} />
         </TouchableOpacity>
     )
 }

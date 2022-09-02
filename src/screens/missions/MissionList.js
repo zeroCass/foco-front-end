@@ -86,7 +86,7 @@ export default props => {
                 <IconButton
                     icon='plus-circle'
                     size={50}
-                    color='blue'
+                    color='#8122f0'
                     onPress={() => props.navigation.navigate('CreateMission')}
                 />
             </View>
@@ -97,8 +97,6 @@ export default props => {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        justifyContent: 'center',
-        alignItems: 'center',
     },
     addButton: {
         position: 'absolute',

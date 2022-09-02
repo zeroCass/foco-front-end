@@ -108,9 +108,8 @@ export default TasksProvider = ({ children })  => {
             case 'toggleDoneAt':
                 tasks = [...state.tasks]
                 tasks.forEach(task => {
-                    console.log(task.id)
                     if (task.id === action.payload.id) {
-                        console.log(task.name, task.doneAt)
+                        console.log('toggleDoneAt', task.doneAt)
                         task.doneAt ? task.doneAt = null : task.doneAt = new Date()
                     }
                 })
