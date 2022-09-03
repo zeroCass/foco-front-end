@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { View, StyleSheet, Text } from 'react-native'
+import { View, StyleSheet, Alert } from 'react-native'
 import { TextInput, Button } from 'react-native-paper'
 import { TextInputMask } from 'react-native-masked-text'
 
@@ -111,8 +111,20 @@ export default (props) => {
                     }
                 /> 
                 }
-                {age >= 16 ? <Text>Maior de IDADE</Text> : 
-                age < 16 ? <Text>Menor de IDADE</Text> : null}
+                { age && age < 16 ? 
+                Alert.alert(`Usuario menor de 16 anos`, `É necessário informar o ID do padrinho ou madrinha para continuar`,[
+                            { text: 'OK' }], { cancelable: true }) : null }
+                { age && age < 16 ?
+                <TextInput
+                    value={godfather}
+                    label='ID do(a) Padrinho/Madrinha'
+                    onChangeText={(id) => setGodfather(id)}
+                    mode='outlined'
+                    outlineColor='#6495ED'
+                    placeholder='37'
+                    activeOutlineColor='#6495ED'
+                    left={<TextInput.Icon icon='key-outline' />}
+                />  : null}
                 {!newUser 
                     ?  <Button onPress={() =>  dispatch({
                         type: 'setAuth',
@@ -123,8 +135,13 @@ export default (props) => {
                         payload: null
                     })} >REGISTRAR-SE</Button>}   
                 {!newUser
-                ?  <Button onPress={() => setNewUser(!newUser) } >REGISTRE-SE</Button>
-                :  <Button onPress={() => setNewUser(!newUser) } >JÁ POSSUO CONTA</Button>} 
+                ?  <Button onPress={() => { 
+                    setNewUser(!newUser) 
+                    setAge(null) } } >REGISTRE-SE</Button>
+                :  <Button onPress={() => {
+                    setNewUser(!newUser) 
+                    setAge(null)
+                }} >JÁ POSSUO CONTA</Button>} 
                 
             </View>
         </View>

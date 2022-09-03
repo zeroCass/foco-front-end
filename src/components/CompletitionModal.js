@@ -47,11 +47,11 @@ const renderPoints = (props, progress) => {
         let tasksCompleted = tasks.reduce((sum, task) => task.doneAt ? sum+=1 : sum, 0)
         progress = tasksCompleted / tasks.length
     }
-    xp = Math.floor(xp  * progress)
-    points = Math.floor(points * progress)
-
     xp += Math.floor(timeBonus)
     points += Math.floor(timeBonus)
+
+    xp = Math.floor(xp  * progress)
+    points = Math.floor(points * progress)
 
     return (
         <View>

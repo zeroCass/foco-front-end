@@ -2,9 +2,13 @@ import React, { createContext, useReducer } from 'react'
 
 export const AuthContext = createContext({})
 const initialState = {
-    name: '',
-    password: '',
+    id: 1,
+    name: 'João Snow',
+    email: 'joao.snow@email.com',
+    password: 'senhafoda',
     auth: null,
+    xp: 3800,
+    points: 125,
 }
 
 export default AuthProvider = ({ children }) => {

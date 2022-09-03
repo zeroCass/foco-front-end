@@ -1,5 +1,5 @@
 import React, { useContext, useState } from 'react'
-import { Modal, View, Text, StyleSheet } from 'react-native'
+import { Modal, View, Text, StyleSheet, ScrollView } from 'react-native'
 import { Button } from 'react-native-paper'
 import moment from 'moment'
 
@@ -49,59 +49,61 @@ export default props => {
             <TouchableView {...props} /> 
                 <View style={styles.centerView}>
                     <TouchableView {...props} />
-                    <View style={styles.contentView}>
-                        <View style={styles.titileContainer} >
-                            <Text style={styles.title}>{props.name}</Text>
-                        </View>
-                        <View style={styles.container} >
-                            <View style={styles.infoContainer} >
-                                <Text style={styles.infoTxt}>
-                                    Descricao: 
-                                    <Text style={styles.txt}>{props.desc}</Text>
-                                </Text>
-                                <Text  style={styles.infoTxt}>
-                                    Prioridade: 
-                                    <Text style={styles.txt}>
-                                        {props.priority == 0 ? 'Baixa'
-                                            :props.priority == 1 ? 'Mediana':'Alta'}
-                                    </Text>
-                                </Text>
-                                <Text style={styles.infoTxt} >
-                                    Dificuldade: 
-                                    <Text style={styles.txt}>
-                                        {props.difficulty == 0 ? 'Baixa'
-                                            :props.difficulty == 1 ? 'Média' : 'Alta'}
-                                    </Text>
-                                </Text>
+                    <ScrollView>
+                        <View style={styles.contentView}>
+                            <View style={styles.titileContainer} >
+                                <Text style={styles.title}>{props.name}</Text>
                             </View>
-                            <View style={{ padding: 20 }} >
+                            <View style={styles.container} >
+                                <View style={styles.infoContainer} >
+                                    <Text style={styles.infoTxt}>
+                                        Descricao: 
+                                        <Text style={styles.txt}>{props.desc}</Text>
+                                    </Text>
+                                    <Text  style={styles.infoTxt}>
+                                        Prioridade: 
+                                        <Text style={styles.txt}>
+                                            {props.priority == 0 ? 'Baixa'
+                                                :props.priority == 1 ? 'Mediana':'Alta'}
+                                        </Text>
+                                    </Text>
+                                    <Text style={styles.infoTxt} >
+                                        Dificuldade: 
+                                        <Text style={styles.txt}>
+                                            {props.difficulty == 0 ? 'Baixa'
+                                                :props.difficulty == 1 ? 'Média' : 'Alta'}
+                                        </Text>
+                                    </Text>
+                                </View>
+                                <View style={{ padding: 20 }} >
+                                    <View style={{ alignItems: 'center' }} >
+                                        <Text style={{ fontWeight:'bold' }} >Tarefas:</Text>
+                                    </View>
+                                    {props.tasks.map(task => {
+                                        const mission = props
+                                        return <TaskSelectList key={task.id} {...task} mission={mission} />
+                                    })}
+                                </View>
                                 <View style={{ alignItems: 'center' }} >
-                                    <Text style={{ fontWeight:'bold' }} >Tarefas:</Text>
+                                    <Text>Prazo Final</Text>
+                                    <View style={styles.dateView}>
+                                        <Button mode='contained' icon='clock-time-nine' style={styles.dateButton}>
+                                            {stringTimeFormated}
+                                        </Button>
+                                        <Button mode='contained' icon='calendar-range' style={styles.dateButton}>
+                                            {stringDateFormated}
+                                        </Button>
+                                    </View>
                                 </View>
-                                {props.tasks.map(task => {
-                                    const mission = props
-                                    return <TaskSelectList key={task.id} {...task} mission={mission} />
-                                })}
-                            </View>
-                            <View style={{ alignItems: 'center' }} >
-                                <Text>Prazo Final</Text>
-                                <View style={styles.dateView}>
-                                    <Button mode='contained' icon='clock-time-nine' style={styles.dateButton}>
-                                        {stringTimeFormated}
-                                    </Button>
-                                    <Button mode='contained' icon='calendar-range' style={styles.dateButton}>
-                                        {stringDateFormated}
-                                    </Button>
+                                <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }} >
+                                    {props.isActive && !props.expired && props.doneAt === null ? 
+                                        <CountDownTimer until={until} />: null}
+                                    {<RenderButton {...props} dispatch={dispatch} type={'Mission'} 
+                                    onOpenCompletition={() => setShowCompletition(true)}  />}
                                 </View>
-                            </View>
-                            <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }} >
-                                {props.isActive && !props.expired && props.doneAt === null ? 
-                                    <CountDownTimer until={until} />: null}
-                                {<RenderButton {...props} dispatch={dispatch} type={'Mission'} 
-                                  onOpenCompletition={() => setShowCompletition(true)}  />}
                             </View>
                         </View>
-                    </View>
+                    </ScrollView>
                     <TouchableView {...props} />
                 </View>
             <TouchableView {...props} />
