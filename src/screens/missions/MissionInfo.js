@@ -1,22 +1,26 @@
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Modal, View, Text, StyleSheet } from 'react-native'
 import { Button } from 'react-native-paper'
 import moment from 'moment'
 
+import { AuthContext } from '@context/Auth'
 import { MissionsContext } from '../../context/Missions'
 
-// component: touchable with view container thats close the modal
+// components
 import TouchableView from '../../components/TouchableView'
-
 import CountDownTimer from '../../components/CountDownTimer'
-
+import CompletitionModal from '@components/CompletitionModal'
+import TaskSelectList from '@components/TaskSelectList'
 // check which button (iniciar, finalizar ou finalizado) should be displayed
 import RenderButton from '../../components/RenderButton'
 
-import TaskSelectList from '@components/TaskSelectList'
+
+
 
 export default props => {
+    const { dispatch: dispatchAuth } = useContext(AuthContext)
     const { dispatch } = useContext(MissionsContext)
+    const [showCompletition, setShowCompletition] = useState(false)
     const stringDateFormated = moment(props.estimateDate).format('D[/]MMM[/]YY')
     const stringTimeFormated = moment(props.estimateDate).format('HH[:]mm')
     // if the task is active, then calculate the time left until expired
@@ -30,6 +34,18 @@ export default props => {
             transparent={true}
             onRequestClose={props.onClose}
         >
+            <CompletitionModal 
+                completitionVisible={showCompletition} 
+                onCloseCompletition={(userSettings) => {
+                    setShowCompletition(false)
+                    if (userSettings) {
+                        dispatchAuth({
+                            type: 'setXP',
+                            payload: null
+                        })
+                    }   
+                }} 
+                {...props} type={'Mission'} />
             <TouchableView {...props} /> 
                 <View style={styles.centerView}>
                     <TouchableView {...props} />
@@ -81,7 +97,8 @@ export default props => {
                             <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }} >
                                 {props.isActive && !props.expired && props.doneAt === null ? 
                                     <CountDownTimer until={until} />: null}
-                                {<RenderButton {...props} dispatch={dispatch} type={'Mission'} />}
+                                {<RenderButton {...props} dispatch={dispatch} type={'Mission'} 
+                                  onOpenCompletition={() => setShowCompletition(true)}  />}
                             </View>
                         </View>
                     </View>

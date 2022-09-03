@@ -5,6 +5,7 @@ import moment from 'moment'
 
 
 export default (props) => {
+
     // active and not completed
     if (props.isActive && props.doneAt === null && !props.expired) {
         return (
@@ -18,7 +19,7 @@ export default (props) => {
                 if (props.onOpenCompletition) props.onOpenCompletition()
             }}>
                 Finalizar
-            </Button> 
+            </Button>      
         )
     }
     // not active and not expired and not done

@@ -3,22 +3,23 @@ import { Modal, View, Text, StyleSheet } from 'react-native'
 import { Button } from 'react-native-paper'
 import moment from 'moment'
 
+//Contexts
+import { AuthContext } from '@context/Auth'
 import { TasksContext } from '../../context/Tasks'
 
+//components
 // component: touchable with view container thats close the modal
 import TouchableView from '../../components/TouchableView'
-
-// countdown timer component that takes the time left to count 
 import CountDownTimer from '../../components/CountDownTimer'
-
 // check which button (iniciar, finalizar ou finalizado) should be displayed
 import RenderButton from '@components/RenderButton'
-
 // modal that is showns after complete a task
 import CompletitionModal from '@components/CompletitionModal'
 
-export default (props) => {
 
+
+export default (props) => {
+    const { dispatch: dispatchAuth } = useContext(AuthContext)
     const { dispatch } = useContext(TasksContext)
     // state to determiante if the completition modal is shown
     const [showCompletition, setShowCompletition] = useState(false)
@@ -36,7 +37,18 @@ export default (props) => {
             transparent={true}
             onRequestClose={props.onClose}
         >   
-            <CompletitionModal isVisible={showCompletition} onClose={() => setShowCompletition(false)} {...props} />
+            <CompletitionModal 
+                completitionVisible={showCompletition} 
+                onCloseCompletition={(userSettings) => {
+                    setShowCompletition(false)
+                    if (userSettings) {
+                        dispatchAuth({
+                            type: 'setXP',
+                            payload: null
+                        })
+                    }   
+                }} 
+                {...props} type={'Task'}/>
             <TouchableView {...props} /> 
             <View style={styles.centerView}>
                 <TouchableView {...props} /> 

@@ -16,6 +16,11 @@ export default AuthProvider = ({ children }) => {
                     ...user,
                     auth: true
                 }
+            case 'setXP':
+                console.log('settedXP')
+                return {
+                    ...user,
+                }
             default: 
                 return user
         }

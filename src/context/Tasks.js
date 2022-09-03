@@ -25,7 +25,7 @@ export default TasksProvider = ({ children })  => {
                         // calculate the timeleft until task expire
                         // until = task.estimateDate.getTime() - new Date().getTime()
                         task.isActive = true
-                        task.startAt = true
+                        task.startAt = new Date()
                         // task.countdown(until)
                     }
                 })
@@ -109,7 +109,7 @@ export default TasksProvider = ({ children })  => {
                 tasks = [...state.tasks]
                 tasks.forEach(task => {
                     if (task.id === action.payload.id) {
-                        console.log('toggleDoneAt', task.doneAt)
+                        // console.log('toggleDoneAt', task.doneAt)
                         task.doneAt ? task.doneAt = null : task.doneAt = new Date()
                     }
                 })
