@@ -11,15 +11,17 @@ export default props => {
     const lvl = Math.floor(user.xp / 1000)
     const xpLeft = user.xp - lvl * 1000
     const progress = xpLeft / 1000
-    console.log(progress)
 
     return (
         <View style={styles.container}>
             <View style={styles.perfilContainer}>
                 <View style={styles.pointsContainer}>
                     <View style={{ flexDirection: 'row', alignItems: 'center' }} >
-                        <Icon name='star' size={40} color='#000' />
-                        <Text style={styles.txtPoints} >{user.points}</Text>
+                        {user.points === 0 || user.points > 0 ? 
+                        <>
+                            <Icon name='star' size={40} color='#000' />
+                            <Text style={styles.txtPoints} >{user.points}</Text>
+                        </> : null}
                     </View>
                 </View>
                 <View style={styles.pefil}>
@@ -34,6 +36,7 @@ export default props => {
                         </View>
                     </View>
                 </View>
+                {user.xp === 0 || user.xp > 0 ? 
                 <View style={styles.levelContainer}>
                     <View>
                         <Text style={{ fontSize: 20, fontWeight: 'bold', color: '#000' }} >Nível {lvl}</Text>
@@ -42,6 +45,7 @@ export default props => {
                         <Bar progress={progress} width={300} height={25} color='#6401ee' />
                     </View>
                 </View>
+                : null}
             </View>
             <View style={styles.addonContainer}>
             </View>

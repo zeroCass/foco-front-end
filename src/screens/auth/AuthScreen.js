@@ -1,22 +1,27 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { View, StyleSheet, Alert } from 'react-native'
-import { TextInput, Button } from 'react-native-paper'
+import { View, StyleSheet, Alert, Text } from 'react-native'
+import { TextInput, Button, Checkbox } from 'react-native-paper'
 import { TextInputMask } from 'react-native-masked-text'
 
 import { AuthContext } from '@context/Auth'
 
-import { server, showError } from '../../common'
-import axios from 'axios'
-
 export default (props) => {
-    const { user, dispatch } = useContext(AuthContext)
+    const { 
+        signin: usersignin, 
+        signup: usersignup,
+        getGodparentId,
+    } = useContext(AuthContext)
+    
     const [name, setName] = useState('')
     const [email, setEmail] = useState('')
     const [password, setPassword] = useState('')
     const [hidePass, setHidePass] = useState(true)
+    const [hidePassConfirm, setHidePassConfirm] = useState(true)
     const [confirmPass, setConfirmPass] = useState('')
     const [birthDate, setBirthDate] = useState(null)
-    const [godfather, setGodfather] = useState(null)
+    const [godparentId, setGodparentId] = useState(null)
+    const [godparent, setGodparent] = useState(false)
+    const [godparentType, setGodparentType] = useState('')
     const [newUser, setNewUser] = useState(false)
     const [age, setAge] = useState(null)
     
@@ -25,46 +30,16 @@ export default (props) => {
     }, [birthDate])
 
 
-    const signupUser = async () => {
+    const getFormattedBirthDate = () => {
         let formattedBirthDate = birthDate.split('/')
-        formattedBirthDate = `${formattedBirthDate[2]}-${formattedBirthDate[1]}-${formattedBirthDate[0]}`
-
-        axios.post(`${server}/auth/signupUser`, {
-            name,
-            email,
-            password,
-            birthDate: formattedBirthDate,
-        })
-        .then(res => {
-            axios.post(`${server}/auth/signupAutonomous`, {
-                id: res.data.insertId
-            })
-            .then(setNewUser(false))
-        })
+        return `${formattedBirthDate[2]}-${formattedBirthDate[1]}-${formattedBirthDate[0]}`
     }
 
-    const signin = async () => {
-        axios.post(`${server}/auth/signin`, {
-                email,
-                password,
-            })
-            .then(res => res.data)
-            .then(data => {
-                dispatch({
-                    type: 'signin',
-                    payload: data
-                })
-            })
-            .catch(e => showError(e))
-
-    }
-
-
-    const getAge = () => {  
+    const getAge = () => { 
         if (birthDate && birthDate.length === 10) {
             let today = new Date();
             let auxbirthDate = birthDate.split('/')
-            auxbirthDate = new Date(birthDate[2], birthDate[1]-1, birthDate[0])
+            auxbirthDate = new Date(auxbirthDate[2], auxbirthDate[1]-1, auxbirthDate[0])
             let age = today.getFullYear() - auxbirthDate.getFullYear();
             let m = today.getMonth() - auxbirthDate.getMonth();
             if (m < 0 || (m === 0 && today.getDate() < auxbirthDate.getDate())) {
@@ -72,6 +47,60 @@ export default (props) => {
             }
             return age;
         }
+    }
+
+    const signup = () => {
+        // if is dependet user
+        if (godparentId) {
+            // check if the godparentId is valid
+            getGodparentId(godparentId)
+            .then((data) => {
+                if (data.length === 0) throw 'Parent com id nao encontrado'
+                const [ parent ] = data.data
+                usersignup({
+                    name,
+                    email,
+                    password,
+                    birthDate : getFormattedBirthDate(),
+                    mainGodparent: parent.id,
+                    type: 'dependent'
+                })
+                .then(({ data }) => data.status === 200 ? setNewUser(false) : setNewUser(false))
+                .catch(e => console.log(e))
+
+            })
+            .catch(e => console.log(e))
+
+            //reset values
+            setAge(null)
+            setNewUser(false)
+            return 
+        }
+
+        // if not dependent user
+        let type = 'autonomous'
+        if (godparent) {
+            type = 'godparent'
+        }
+        console.log('type', type)
+        usersignup({
+            name,
+            email,
+            password,
+            birthDate : getFormattedBirthDate(),
+            type,
+            descr: godparentType,
+        })
+        .then(({ data }) => data.status === 200 ? setNewUser(false) : setNewUser(false))
+        .catch(e => console.log(e))
+
+        //reset values
+        setAge(null)
+        setNewUser(false)
+    }
+
+    const signin = () => {
+        usersignin({ email, password })
     }
 
     return (
@@ -120,7 +149,8 @@ export default (props) => {
                     outlineColor='#6495ED'
                     placeholder='*********'
                     activeOutlineColor='#6495ED'
-                    right={<TextInput.Icon icon='eye' onPress={() => setHidePass(!hidePass)} />}
+                    secureTextEntry={hidePassConfirm}
+                    right={<TextInput.Icon icon='eye' onPress={() => setHidePassConfirm(!hidePassConfirm)} />}
                     left={<TextInput.Icon icon='lock' />}
                 /> 
                 }
@@ -148,30 +178,56 @@ export default (props) => {
                     }
                 /> 
                 }
-                { age && age < 16 ? 
+                { age && age < 16 && !godparentId ? 
                 Alert.alert(`Usuario menor de 16 anos`, `É necessário informar o ID do padrinho ou madrinha para continuar`,[
                             { text: 'OK' }], { cancelable: true }) : null }
                 { age && age < 16 ?
                 <TextInput
-                    value={godfather}
+                    value={godparentId}
                     label='ID do(a) Padrinho/Madrinha'
-                    onChangeText={(id) => setGodfather(id)}
+                    onChangeText={(id) => setGodparentId(id)}
                     mode='outlined'
                     outlineColor='#6495ED'
                     placeholder='37'
                     activeOutlineColor='#6495ED'
                     left={<TextInput.Icon icon='key-outline' />}
                 />  : null}
+                {godparent ? 
+                <TextInput
+                    value={godparentType}
+                    label='Tipo de Padrinho/Madrinha'
+                    onChangeText={(type) => setGodparentType(type)}
+                    mode='outlined'
+                    outlineColor='#6495ED'
+                    placeholder='Ex: Mãe'
+                    activeOutlineColor='#6495ED'
+                    left={<TextInput.Icon icon='account' />}
+                />  : null }
+                {age && age > 16 ?
+                <View style={styles.checkBox}>
+                    <Checkbox
+                        status={godparent ? 'checked' : 'unchecked'}
+                        onPress={() => setGodparent(!godparent)}
+                        color='purple'
+                    />
+                    <View>
+                        <Text style={{ fontWeight: 'bold' }}>Sou Padrinho/Madrinha</Text>
+                    </View>
+                </View>
+                    : null}
                 {!newUser 
                     ?  <Button onPress={() => signin()} >LOGIN</Button>
-                    : <Button onPress={() => signupUser()} >REGISTRAR-SE</Button>}   
+                    : <Button onPress={() => signup()} >REGISTRAR-SE</Button>}   
                 {!newUser
                 ?  <Button onPress={() => { 
                     setNewUser(!newUser) 
-                    setAge(null) } } >REGISTRE-SE</Button>
+                    setAge(null)
+                    setGodparent(false) 
+                }} >REGISTRE-SE</Button>
                 :  <Button onPress={() => {
                     setNewUser(!newUser) 
                     setAge(null)
+                    setGodparent(false)
                 }} >JÁ POSSUO CONTA</Button>} 
                 
             </View>
@@ -190,5 +246,11 @@ const styles = StyleSheet.create({
         flex: 1, 
         justifyContent:'center', 
         width: '80%',
+    },
+    checkBox: {
+        flexDirection: 'row', 
+        alignItems: 'center', 
+        paddingRight: 10, 
+        margin: 10,
     },
 })

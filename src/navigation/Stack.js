@@ -54,7 +54,7 @@ export default () => {
     const { user } = useContext(AuthContext)
     return (
         <Stack.Navigator initialRouteName='AuthScreen'>
-        {!user.auth 
+        {!user.token 
             ? <Stack.Group>
                 <Stack.Screen name='AuthScreen' component={AuthScreen} options={{ headerShown: false }}/>
             </Stack.Group> 

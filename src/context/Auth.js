@@ -1,49 +1,48 @@
-import React, { createContext, useReducer } from 'react'
+import React, { createContext, useState } from 'react'
+import axios from 'axios'
+import { server } from '../common'
 
 export const AuthContext = createContext({})
 const initialState = {
-    id: 1,
-    name: 'João Snow',
-    email: 'joao.snow@email.com',
-    password: 'senhafoda',
-    auth: null,
-    xp: 3800,
-    points: 125,
+    id: null,
+    name: '',
+    email: '',
+    password: '',
+    token: null,
+    xp: 0,
+    points: 10,
 }
 
 export default AuthProvider = ({ children }) => {
-    // const [user, setUser] = useState(initialState)
-    const reducer = (user, action) => {
-        switch(action.type){
-            case 'setAuth':
-                return {
-                    ...user,
-                    auth: true
-                }
-            case 'signin': {
-                return {
-                    ...user,
-                    auth: true,
-                    id: action.payload.id,
-                    name: action.payload.name,
-                    email: action.payload.email,
-                    birthDate: action.payload.birthDate,
-                }
-            }
-            case 'setXP':
-                console.log('settedXP')
-                return {
-                    ...user,
-                }
-            default: 
-                return user
-        }
+    const [user, setUser] = useState(initialState)
+
+    const getGodparentId = (id) => {
+        return axios.get(`${server}/users/godparent/${id}`)
+    }
+    
+    const signin = ({ email, password }) => {
+        axios.post(`${server}/auth/signin`, {
+            email,
+            password,
+        })
+        .then((res) => {
+            const [data] = res.data 
+            setUser({...data, token: true}) 
+        })
+        .catch(e => console.log(e))
     }
 
-    const [user, dispatch] = useReducer(reducer, initialState)
+    const signup = (user) => {
+        return axios.post(`${server}/auth/signup`, {...user})
+    }
+
+    const signout = () => {
+        setUser({ token: null })
+    }
+
 
     return (
-        <AuthContext.Provider value={{ user, dispatch }}>
+        <AuthContext.Provider value={{ user, signin, signout, signup, getGodparentId }}>
             {children}
         </AuthContext.Provider>
 

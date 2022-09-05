@@ -104,6 +104,7 @@ export default (props) => {
                     keyExtractor={item => `${item.id}`}
                     renderItem={({ item }) => <Task {...item} />}
                 />
+                {!user.mainGodparent ? 
                 <View style={styles.addButton}>
                     <IconButton
                         icon='plus-circle'
@@ -111,7 +112,7 @@ export default (props) => {
                         color='blue'
                         onPress={() => props.navigation.navigate('CreateTask')}
                     />
-                </View>
+                </View> :null}
             </View>
     )
 }

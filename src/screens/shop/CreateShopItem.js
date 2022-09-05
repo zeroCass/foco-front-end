@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { View, Text, StyleSheet, Modal, ImageBackground } from 'react-native'
 import { Button, TextInput } from 'react-native-paper'
+import { AuthContext } from '@context/Auth'
 
 import TouchableView from '../../components/TouchableView'
 import imgSource from '../../assets/images/cart_market.png'
@@ -8,6 +9,8 @@ import imgSource from '../../assets/images/cart_market.png'
 export default props => {
     const [name, setName] = useState('')
     const [price, setPrice] = useState('')
+    const { user } = useContext(AuthContext)
+
     return (
         <Modal
             animationType='slide'

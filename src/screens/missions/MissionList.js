@@ -4,10 +4,11 @@ import { IconButton } from 'react-native-paper'
 import Mission from '../../components/Mission'
 
 import { MissionsContext } from '../../context/Missions'
+import { AuthContext } from '@context/Auth'
 
 export default props => {
     const { state: {missions}, dispatch } = useContext(MissionsContext)
-
+    const { user } = useContext(AuthContext)
     // the mission obj is recieve by params
     // everytime the params changed, rerender the component
     // useEffect(() => {
@@ -82,6 +83,7 @@ export default props => {
                 keyExtractor={item => `${item.id}`}
                 renderItem={({ item }) => <Mission {...item} />}
             />
+            {!user.mainGodparent ?
             <View style={styles.addButton}>
                 <IconButton
                     icon='plus-circle'
@@ -90,6 +92,7 @@ export default props => {
                     onPress={() => props.navigation.navigate('CreateMission')}
                 />
             </View>
+            :null}
         </View>
     )
 }

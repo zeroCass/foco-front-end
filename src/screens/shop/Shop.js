@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { IconButton } from 'react-native-paper'
+import { AuthContext } from '@context/Auth'
 
 import ShopItem from '../../components/ShopItem'
 import CreateShopItem from './CreateShopItem'
@@ -8,7 +9,7 @@ import CreateShopItem from './CreateShopItem'
 export default props => {
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [shopItems, setShopItems] = useState([])
-
+    const { user } = useContext(AuthContext)
 
     const addShopItem = (item) => {
         item.id = Math.floor((Math.random() * 1000))
@@ -43,6 +44,7 @@ export default props => {
                         return <ShopItem key={item.id} {...item} redeemItem={redeemItem} />
                     })}
                 </ScrollView>
+                {!user.mainGodparent ? 
                 <View style={styles.addButton}>
                     <IconButton
                         icon='plus-circle'
@@ -51,6 +53,7 @@ export default props => {
                         onPress={() => setShowCreateModal(true)}
                     />
                 </View>
+                :null}
             </View>
         </>
     )
