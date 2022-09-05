@@ -8,8 +8,9 @@ import moment from 'moment'
 
 // import { AuthContext } from '../context/Auth'
 import { TasksContext } from '../../context/Tasks'
-
-
+import { AuthContext } from '@context/Auth'
+import axios from 'axios'
+import { server, showError } from '../../common'
 
 const priorityOptions = [
     {label: 'Baixa', value: 0 },
@@ -26,6 +27,7 @@ const difficultyOptions = [
 export default props => {
     // const { state } = useContext(AuthContext)
     const { dispatch } = useContext(TasksContext)
+    const { user } = useContext(AuthContext)
 
     const [name, setName] = useState('')
     const [desc, setDesc] = useState('')
@@ -83,7 +85,10 @@ export default props => {
             expired: false,
             missionId: null,
             completition: 0,
+            belongId: user.id,
+            createId: user.id,
         }
+        
         // call the dispatch
         dispatch({
             type: 'addTask',

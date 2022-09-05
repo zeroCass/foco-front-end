@@ -4,7 +4,9 @@ import { TextInput, Button } from 'react-native-paper'
 import { TextInputMask } from 'react-native-masked-text'
 
 import { AuthContext } from '@context/Auth'
-import { ContinousBaseGesture } from 'react-native-gesture-handler/lib/typescript/handlers/gestures/gesture'
+
+import { server, showError } from '../../common'
+import axios from 'axios'
 
 export default (props) => {
     const { user, dispatch } = useContext(AuthContext)
@@ -13,24 +15,59 @@ export default (props) => {
     const [password, setPassword] = useState('')
     const [hidePass, setHidePass] = useState(true)
     const [confirmPass, setConfirmPass] = useState('')
-    const [birthday, setBirthday] = useState(null)
+    const [birthDate, setBirthDate] = useState(null)
     const [godfather, setGodfather] = useState(null)
     const [newUser, setNewUser] = useState(false)
     const [age, setAge] = useState(null)
     
     useEffect(() => {
         setAge(getAge())
-    }, [birthday])
+    }, [birthDate])
+
+
+    const signupUser = async () => {
+        let formattedBirthDate = birthDate.split('/')
+        formattedBirthDate = `${formattedBirthDate[2]}-${formattedBirthDate[1]}-${formattedBirthDate[0]}`
+
+        axios.post(`${server}/auth/signupUser`, {
+            name,
+            email,
+            password,
+            birthDate: formattedBirthDate,
+        })
+        .then(res => {
+            axios.post(`${server}/auth/signupAutonomous`, {
+                id: res.data.insertId
+            })
+            .then(setNewUser(false))
+        })
+    }
+
+    const signin = async () => {
+        axios.post(`${server}/auth/signin`, {
+                email,
+                password,
+            })
+            .then(res => res.data)
+            .then(data => {
+                dispatch({
+                    type: 'signin',
+                    payload: data
+                })
+            })
+            .catch(e => showError(e))
+
+    }
 
 
     const getAge = () => {  
-        if (birthday && birthday.length === 10) {
+        if (birthDate && birthDate.length === 10) {
             let today = new Date();
-            let birthDate = birthday.split('/')
-            birthDate = new Date(birthDate[2], birthDate[1]-1, birthDate[0])
-            let age = today.getFullYear() - birthDate.getFullYear();
-            let m = today.getMonth() - birthDate.getMonth();
-            if (m < 0 || (m === 0 && today.getDate() < birthDate.getDate())) {
+            let auxbirthDate = birthDate.split('/')
+            auxbirthDate = new Date(birthDate[2], birthDate[1]-1, birthDate[0])
+            let age = today.getFullYear() - auxbirthDate.getFullYear();
+            let m = today.getMonth() - auxbirthDate.getMonth();
+            if (m < 0 || (m === 0 && today.getDate() < auxbirthDate.getDate())) {
                 age--;
             }
             return age;
@@ -89,10 +126,10 @@ export default (props) => {
                 }
                 { newUser && 
                 <TextInput
-                    value={birthday}
+                    value={birthDate}
                     label='Data de Nascimento'
-                    onChangeText={(birthday) => { 
-                        setBirthday(birthday)
+                    onChangeText={(birthDate) => { 
+                        setBirthDate(birthDate)
                     }}
                     mode='outlined'
                     outlineColor='#6495ED'
@@ -126,14 +163,8 @@ export default (props) => {
                     left={<TextInput.Icon icon='key-outline' />}
                 />  : null}
                 {!newUser 
-                    ?  <Button onPress={() =>  dispatch({
-                        type: 'setAuth',
-                        payload: null
-                    })} >LOGIN</Button>
-                    : <Button onPress={() =>  dispatch({
-                        type: 'setAuth',
-                        payload: null
-                    })} >REGISTRAR-SE</Button>}   
+                    ?  <Button onPress={() => signin()} >LOGIN</Button>
+                    : <Button onPress={() => signupUser()} >REGISTRAR-SE</Button>}   
                 {!newUser
                 ?  <Button onPress={() => { 
                     setNewUser(!newUser) 

@@ -1,5 +1,7 @@
 import React, { createContext, useReducer } from 'react'
 import { Alert } from 'react-native'
+import axios from 'axios'
+import { server, showError } from '../common'
 
 export const TasksContext = createContext({})
 
@@ -14,6 +16,7 @@ export default TasksProvider = ({ children })  => {
                 let until = newTask.estimateDate.getTime() - new Date().getTime()
                 // call the countdown function to initilize the countdown
                 // newTask.countdown(until)
+                axios.post(`${server}/tasks`, {...newTask}).then(res => console.log(res.data))
                 return {
                     ...state, 
                     tasks: [...state.tasks, newTask],

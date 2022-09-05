@@ -20,6 +20,16 @@ export default AuthProvider = ({ children }) => {
                     ...user,
                     auth: true
                 }
+            case 'signin': {
+                return {
+                    ...user,
+                    auth: true,
+                    id: action.payload.id,
+                    name: action.payload.name,
+                    email: action.payload.email,
+                    birthDate: action.payload.birthDate,
+                }
+            }
             case 'setXP':
                 console.log('settedXP')
                 return {
