@@ -48,7 +48,10 @@ export default props => {
                         const item = {
                             name,
                             price,
-                            image: imgSource,
+                            image: null,
+                            userId: user.id,
+                            createId: user.id,
+                            redeemed: false,
                         }
                         props.saveItem(item)
                         props.onClose()

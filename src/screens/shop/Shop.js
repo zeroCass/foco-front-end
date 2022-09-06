@@ -1,4 +1,4 @@
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { View, Text, StyleSheet, ScrollView } from 'react-native'
 import { IconButton } from 'react-native-paper'
 import { AuthContext } from '@context/Auth'
@@ -6,29 +6,48 @@ import { AuthContext } from '@context/Auth'
 import ShopItem from '../../components/ShopItem'
 import CreateShopItem from './CreateShopItem'
 
+import axios from 'axios'
+import { server } from '../../common'
+
 export default props => {
     const [showCreateModal, setShowCreateModal] = useState(false)
     const [shopItems, setShopItems] = useState([])
-    const { user } = useContext(AuthContext)
+    const { user, updateStatus } = useContext(AuthContext)
+
+    useEffect(() => {
+        const fetchInitialData = async () => {
+            getItems()
+        }
+        fetchInitialData()
+    }, [])
+
+    const getItems = () => {
+        axios.get(`${server}/shop/${user.id}`)
+        .then((res) => setShopItems(res.data))
+        
+    }
 
     const addShopItem = (item) => {
-        item.id = Math.floor((Math.random() * 1000))
-        setShopItems([...shopItems, item])
+        axios.post(`${server}/shop`, {
+            ...item
+        })
+        .then(() => getItems())
+        .catch(e => console.log(e))
+        
     }
 
     const redeemItem = (itemId) => {
-        const newShopItems = [...shopItems]
-        let idx = null
-        for(let i = 0; i < newShopItems.length; i++) {
-            if (newShopItems[i].id === itemId) {
-                idx = i
-            }
+        // check if the user has enough points to purchase
+        const item = shopItems.find(i => i.id === itemId)
+        if (item && user.points >= item.price) {
+            axios.put(`${server}/shop/${itemId}`)
+            .then(() => getItems())
+            .then(() => updateStatus([{points: -item.price}]))
+            .catch(e => console.log(e))
         }
-        if (idx !== null){
-            newShopItems.splice(idx, 1)
-            console.log(idx, newShopItems)
-            setShopItems(newShopItems)
-        }
+
+
+        
     }
 
     return (
@@ -40,9 +59,10 @@ export default props => {
             />
             <View style={{ flex: 1 }} >
                 <ScrollView contentContainerStyle={styles.container} >
-                    {shopItems.map(item => {
+                    {shopItems ?
+                    shopItems.map(item => {
                         return <ShopItem key={item.id} {...item} redeemItem={redeemItem} />
-                    })}
+                    }): null}
                 </ScrollView>
                 {!user.mainGodparent ? 
                 <View style={styles.addButton}>

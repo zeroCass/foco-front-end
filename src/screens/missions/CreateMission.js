@@ -9,6 +9,7 @@ import TaskSelectBox from '../../components/TaskSelectBox'
 
 import { TasksContext } from '../../context/Tasks'
 import { MissionsContext } from '../../context/Missions'
+import { AuthContext } from '@context/Auth'
 
 const ModalList = (props) => {
 
@@ -77,8 +78,9 @@ const ModalList = (props) => {
 
 export default props => {
 
-    const { state, dispatch } = useContext(TasksContext)
-    const { dispatch: dispacthMission } = useContext(MissionsContext)
+    const { state: { tasks }, setDate2Null } = useContext(TasksContext)
+    const { addMission } = useContext(MissionsContext)
+    const { user } = useContext(AuthContext)
 
     const [modalVisibilty, setModalVisibility] = useState(false) 
     const [category, setCategory] = useState('')
@@ -150,7 +152,6 @@ export default props => {
         const priorityAvg = Math.floor(selectedTasks.reduce((sum, task) => sum + task.priority, 0) / selectedTasks.length) 
 
         const mission = {
-            id: Math.random() * 1000,
             name,
             estimateDate: finalDate,
             initDate: startDate,
@@ -162,35 +163,21 @@ export default props => {
             difficulty: difficultyAvg,
             priority: priorityAvg,
             tasks: selectedTasks,
-            completition: 0,
+            belongId: user.id,
+            createId: user.id,
         }
 
         // set task id for each task in the mission array
         // setNull2Date for each task (reset date status)
         selectedTasks.forEach(sTask => {
-            state.tasks.forEach(task => {
+            tasks.forEach(task => {
                 if (task.id === sTask.id) {
-                    dispatch({
-                        type: 'setMission',
-                        payload: {
-                            id: task.id,
-                            missionId: mission.id
-                        }
-                    })
-                    dispatch({
-                        type: 'setNull2Date',
-                        payload: {
-                            id: task.id
-                        }
-                    })
+                    setDate2Null(task.id)
                 } 
             })
         })
        
-        dispacthMission({
-            type: 'addMission',
-            payload: mission
-        })  
+        addMission(mission)
         props.navigation.navigate('Missões')
          //convert data to json to pass through screen (navigation)
         // const missionJSON = JSON.stringify(mission)

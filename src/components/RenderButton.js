@@ -11,10 +11,7 @@ export default (props) => {
         return (
             <Button onPress={() => {
                 // task completed
-                props.dispatch({
-                    type: props.type === 'Task' ? 'doneTask' : 'doneMission',
-                    payload: { id: props.id }
-                })
+                props.done(props.id)
                 // by clicking in finalizate, open the completitin modal
                 if (props.onOpenCompletition) props.onOpenCompletition()
             }}>
@@ -27,10 +24,7 @@ export default (props) => {
         return (
             <Button onPress={() => {
                 // startTask in Tasks
-                props.dispatch({
-                    type: props.type === 'Task' ? 'startTask':'startMission',
-                    payload: { id: props.id }
-                })
+                props.start(props.id)
             }}>
                 Iniciar
             </Button>

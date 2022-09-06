@@ -19,8 +19,8 @@ import CompletitionModal from '@components/CompletitionModal'
 
 
 export default (props) => {
-    const { dispatch: dispatchAuth } = useContext(AuthContext)
-    const { dispatch } = useContext(TasksContext)
+    const { updateStatus } = useContext(AuthContext)
+    const { startTask, doneTask } = useContext(TasksContext)
     // state to determiante if the completition modal is shown
     const [showCompletition, setShowCompletition] = useState(false)
     const stringDateFormated = moment(props.estimateDate).format('D[/]MMM[/]YY')
@@ -42,10 +42,7 @@ export default (props) => {
                 onCloseCompletition={(userSettings) => {
                     setShowCompletition(false)
                     if (userSettings) {
-                        dispatchAuth({
-                            type: 'setXP',
-                            payload: null
-                        })
+                        updateStatus(userSettings)
                     }   
                 }} 
                 {...props} type={'Task'}/>
@@ -91,7 +88,7 @@ export default (props) => {
                         <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 30 }} >
                             {props.isActive && !props.expired && props.doneAt === null ? 
                                 <CountDownTimer until={until} />: null}
-                            {<RenderButton {...props} dispatch={dispatch} type={'Task'} 
+                            {<RenderButton {...props} done={doneTask} start={startTask} type={'Task'} 
                                 onOpenCompletition={() => setShowCompletition(true)} />}
                         </View>
                     </View>

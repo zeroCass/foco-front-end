@@ -19,7 +19,7 @@ import { AuthContext } from '../../context/Auth'
 
 export default (props) => {
     const  { user } = useContext(AuthContext)
-    const { state, getTasks, expiredTask, initCountdown } = useContext(TasksContext)
+    const { state, expiredTask, initCountdown } = useContext(TasksContext)
     // const [countdowns, setCountdowns] = useState([])
     // const [countdowns2init, setCountdowns2init] = useState([])
 
@@ -76,7 +76,6 @@ export default (props) => {
     }
 
     useEffect(() => {
-        console.log('render')
         setupCountidowns2init()
         setupCountdowns()
         return () => { 

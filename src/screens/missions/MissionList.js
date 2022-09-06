@@ -7,16 +7,10 @@ import { MissionsContext } from '../../context/Missions'
 import { AuthContext } from '@context/Auth'
 
 export default props => {
-    const { state: {missions}, dispatch } = useContext(MissionsContext)
+    const { state: {missions}, initCountdown, expiredMission } = useContext(MissionsContext)
     const { user } = useContext(AuthContext)
     // the mission obj is recieve by params
-    // everytime the params changed, rerender the component
-    // useEffect(() => {
-    //     if (props.route.params) {
-    //         const mission = JSON.parse(props.route.params)
-    //         setMissions((prevMissions) => [...prevMissions, mission])
-    //     }
-    // }, [props.route.params])
+
 
     useEffect(() => {
         setupCountidowns2init()
@@ -25,7 +19,7 @@ export default props => {
             countdowns2init.forEach(elem => clearInterval(elem))
             countdowns.forEach(elem => clearInterval(elem.timeout))
         }
-    }, [missions])
+    }, [missions, missions.tasks])
 
 
     let countdowns = []
@@ -44,10 +38,10 @@ export default props => {
             if (!found) {
                 // pegar missions que o init time < date now
                 if ((!mission.expired && mission.doneAt === null) && 
-                    (mission.initDate === null || (new Date().getTime() >= mission.initDate.getTime()))) {
-                    const until = mission.estimateDate.getTime() - new Date().getTime()
+                    (mission.initDate === null || (new Date().getTime() >= new Date(mission.initDate).getTime()))) {
+                    const until = new Date(mission.estimateDate).getTime() - new Date().getTime()
                     auxCountdowns.push({
-                        timeout: setTimeout(() => dispatch({ type: 'expiredMission', payload: {id: mission.id }}), until),
+                        timeout: setTimeout(() => expiredMission(mission.id), until),
                         id: mission.id,
                     })
                 } 
@@ -62,10 +56,10 @@ export default props => {
     const setupCountidowns2init = () => {
         const auxCountdowns2init = missions.map(mission => {
             if ((!mission.expired && mission.doneAt === null) && 
-                (mission.initDate !== null && mission.initDate.getTime() > new Date().getTime())) {
-                const until = mission.initDate.getTime() - new Date().getTime()
+                (mission.initDate !== null && new Date(mission.initDate).getTime() > new Date().getTime())) {
+                const until = new Date(mission.initDate).getTime() - new Date().getTime()
                 return setTimeout(() => {
-                    dispatch({ type: 'initCountdown', payload: { id: mission.id } })
+                    initCountdown(mission.id)
                     setupCountdowns() //call to setup the coutndown to expired
                 }, until)
             }

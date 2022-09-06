@@ -3,16 +3,18 @@ import { View, Text, StyleSheet, TouchableOpacity, Dimensions, Image } from 'rea
 import Icon from 'react-native-vector-icons/FontAwesome'
 
 import RedeemItem from '@screens/shop/RedeemItem'
+import imgSource from '../../src/assets/images/cart_market.png'
 
 export default props => {
     const [showRedeemModal, setShowRedeemModal] = useState(false)
+    const image = props.image ? props.image : imgSource
 
     return (
         <TouchableOpacity onPress={() => setShowRedeemModal(true)} >
             <RedeemItem  isVisible={showRedeemModal} onClose={() => setShowRedeemModal(false)} {...props} />
             <View style={styles.container}>
                 <View style={[styles.imgContainer, { justifyContent: 'center', alignItems: 'center' }]}>
-                    <Image source={props.image} style={styles.imgContainer} />
+                    <Image source={image} style={styles.imgContainer} />
                 </View>
                 <View style={styles.txtContainer}>
                     <Text style={styles.txt}>{props.name}</Text>

@@ -7,15 +7,10 @@ import { TasksContext } from '@context/Tasks'
 import DotTask from '@components/DotTask'
 
 export default props => {
-    const { dispatch, state: { tasks } } = useContext(TasksContext)
+    const { toggleDoneAt } = useContext(TasksContext)
     const setDone = () => {
         if (props.mission.isActive) {
-            dispatch({
-                type: 'toggleDoneAt',
-                payload: {
-                    id: props.id
-                }
-            })
+            toggleDoneAt(props.id)
             // setIsDone(!isDone)
         }
     }

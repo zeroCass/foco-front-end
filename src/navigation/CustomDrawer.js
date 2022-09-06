@@ -15,11 +15,12 @@ import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { AuthContext } from '@context/Auth'
 import { TasksContext } from '@context/Tasks'
-
+import { MissionsContext } from '@context/Missions'
 
 export default props => {
     const { user, signout } = useContext(AuthContext)
     const { setInitial } = useContext(TasksContext)
+    const {setInitial: setInitialMission} = useContext(MissionsContext)
 
     return (
         <View style={{ flex: 1 }}>
@@ -62,6 +63,7 @@ export default props => {
                     <TouchableOpacity onPress={() => {
                         signout()
                         setInitial(false)
+                        setInitialMission(false)
                     }} >
                         <Icon name='exit-to-app' color='#FFF' size={30}/>
                     </TouchableOpacity>

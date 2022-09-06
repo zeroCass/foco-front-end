@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import { View, Text, StyleSheet, Modal, Alert, Image } from 'react-native'
 import { Button, TextInput } from 'react-native-paper'
+import imgSource from '../../../src/assets/images/cart_market.png'
 
 import TouchableView from '../../components/TouchableView'
 
 export default props => {
-
+    const image = props.image ? props.image : imgSource
     return (
         <Modal
             animationType='slide'
@@ -18,7 +19,7 @@ export default props => {
                 <TouchableView {...props} />
                 <View style={styles.contentView}>
                     <View style={[styles.imgContainer, { justifyContent:'center', alignItems:'center' }]}>
-                        <Image source={props.image} style={{ width: '100%', height:'100%' }} />
+                        <Image source={image} style={{ width: '100%', height:'100%' }} />
                     </View>
                     <View style={styles.txtContainer}>
                         <Text style={styles.txt}>{props.name}</Text>

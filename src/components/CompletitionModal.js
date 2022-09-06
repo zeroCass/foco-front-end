@@ -56,7 +56,7 @@ const renderPoints = (props, progress) => {
     return (
         <View>
             <Text>Ponto Recebidos: {points}</Text>
-            <Button onPress={() => props.onCloseCompletition({ xp, points })} >OK</Button>
+            <Button onPress={() => props.onCloseCompletition([{ xp: xp }, {points: points}])} >OK</Button>
         </View>
     )
 }

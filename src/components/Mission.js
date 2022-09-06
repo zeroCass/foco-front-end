@@ -6,18 +6,6 @@ import MissionInfo from '../screens/missions/MissionInfo'
 
 import DotTask from '@components/DotTask'
 
-// const DotItem = (task) => {
-//     let iconName = task.doneAt ? 'check-circle' : 'dots-horizontal-circle-outline'
-//     let iconColor = task.doneAt ? '#9d53f3' : '#AAA'
-//     // #9d53f3 (roxo)
-//     // #16CBC8 (auzl)
-//     return (
-//         <View style={{ flexDirection: 'row', margin: 10 }} >
-//             <Icon name={iconName} size={30} color={iconColor} />
-//             <Text>{task.name}</Text>
-//         </View>
-//     )
-// }
 
 export default props => {
     const [showMissionInfo, setMissionInfo] = useState(false)
@@ -79,7 +67,9 @@ export default props => {
                         </View>
                     </View>
                     <View style={styles.taskList}>
-                        {props.tasks.map(task => <DotTask key={task.id} {...task} />)}
+                        {props.tasks ? 
+                        props.tasks.map(task => <DotTask key={task.id} {...task} />)
+                        : null}
                     </View>
                     <View style={{ alignItems: 'center' }} >
                         <Text style={{ color: statusColor }} >{status}</Text>

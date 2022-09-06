@@ -16,6 +16,14 @@ const initialState = {
 export default AuthProvider = ({ children }) => {
     const [user, setUser] = useState(initialState)
 
+    const getUserInfo = () => {
+        axios.get(`${server}/users/bytype/${user.id}`)
+        .then(res => {
+            const [data] = res.data 
+            setUser({...user, ...data}) 
+        }) 
+    }
+
     const getGodparentId = (id) => {
         return axios.get(`${server}/users/godparent/${id}`)
     }
@@ -40,9 +48,24 @@ export default AuthProvider = ({ children }) => {
         setUser({ token: null })
     }
 
+    const updateStatus = (status) => {
+        axios.put(`${server}/users/update/${user.id}`, {
+            mainGodparent: user.mainGodparent ? true : false,
+            data: status
+        })
+        .then(res => res.status === 200 ? getUserInfo() : null)
+    }
+
 
     return (
-        <AuthContext.Provider value={{ user, signin, signout, signup, getGodparentId }}>
+        <AuthContext.Provider value={{ 
+            user, 
+            signin, 
+            signout, 
+            signup, 
+            getGodparentId,
+            updateStatus,
+        }}>
             {children}
         </AuthContext.Provider>
 

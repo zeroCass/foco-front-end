@@ -71,7 +71,6 @@ export default props => {
         }
 
         const newTask = {
-            id: Math.random() * 1000,
             name,
             desc,
             estimateDate: finalDate,

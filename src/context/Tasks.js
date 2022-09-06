@@ -5,12 +5,12 @@ import { server, showError } from '../common'
 import { AuthContext } from '@context/Auth'
 
 export const TasksContext = createContext({})
-let first = true
 const initialState = { tasks: []}
 
 export default TasksProvider = ({ children })  => {
     const { user } = useContext(AuthContext)
     const [state, setState] = useState(initialState)
+    //initial state handler
     const [initial, setInitial] = useState(false)
 
     const addTask = async (task) => {
@@ -40,17 +40,12 @@ export default TasksProvider = ({ children })  => {
                 let until = new Date(task.initDate).getTime() - new Date().getTime()
                 if (until < 0 && task.doneAt === null && !task.isActive && !task.expired) {
                     try {
-                        const isActive = await axios.put(`${server}/tasks/${task.id}`, {
-                            attr: 'isActive',
-                            data: true,
+                        const response = await axios.put(`${server}/tasks/${task.id}`, {
+                            attr: ['isActive', 'startAt'],
+                            data: [true, new Date()],
                         })
-                        // mark as inactive
-                        const startAt = await axios.put(`${server}/tasks/${task.id}`, {
-                            attr: 'startAt',
-                            data: new Date(),
-                        })
-                        console.log('startStatus:', startAt.status, isActive.status)
-                        if (startAt.status === 200 && isActive.status === 200)
+ 
+                        if (response.status === 200)
                             getTasks() 
                     }catch(e) {
                         console.log('initcountdown', e)
@@ -73,17 +68,11 @@ export default TasksProvider = ({ children })  => {
 
                     try {
                         // mark as expired task
-                        const expired = await axios.put(`${server}/tasks/${task.id}`, {
-                            attr: 'expired',
-                            data: true,
+                        const response = await axios.put(`${server}/tasks/${task.id}`, {
+                            attr: ['expired', 'isActive'],
+                            data: [true, false],
                         })
-                        // mark as inactive
-                        const isActive = await axios.put(`${server}/tasks/${task.id}`, {
-                            attr: 'isActive',
-                            data: false,
-                        })
-                        console.log('expired:', expired.status)
-                        if (expired.status === 200 && isActive.status === 200)
+                        if (response.status === 200)
                             getTasks()
                     } catch(e) {
                         console.log(e)
@@ -97,142 +86,71 @@ export default TasksProvider = ({ children })  => {
     }
 
 
-    const startTask = (taskId) => {
+    const startTask = async (taskId) => {
         const tasks = [...state.tasks]
-        tasks.forEach(async task => {
-            if (task.id === taskId) {
-                try {
-                    await axios.put(`${server}/tasks/id`, { attr: 'startAt', data: new Date() })
-                    await axios.put(`${server}/tasks/id`, { attr: 'isActive', data: true })
-                    getTasks()
-                }catch(e) {
-                    console.log(e)
-                }
-            }
-        })
+        const task = tasks.find(t => t.id === taskId)
+        if (task) {
+            const res = await axios.put(`${server}/tasks/${taskId}`, { 
+                attr: ['startAt', 'isActive'], data: [new Date(), true]
+            })
+            if (res.status === 200)
+                getTasks()
+        }
+        
     }
 
-    // const reducer = (state, action) => {
-    //     switch(action.type) {
-    //         case 'addTask':
-    //             let newTask = action.payload
-    //             // calculate the timeleft until task expire
-    //             let until = newTask.estimateDate.getTime() - new Date().getTime()
-    //             // call the countdown function to initilize the countdown
-    //             // newTask.countdown(until)
-    //             axios.post(`${server}/tasks`, {...newTask}).then(res => console.log(res.data))
-    //             return {
-    //                 ...state, 
-    //                 tasks: [...state.tasks, newTask],
-    //             }
-    //         case 'startTask':
-    //             let tasks = [...state.tasks]
-    //             tasks.forEach(task => {
-    //                 if (task.id === action.payload.id) {
-    //                     // calculate the timeleft until task expire
-    //                     // until = task.estimateDate.getTime() - new Date().getTime()
-    //                     task.isActive = true
-    //                     task.startAt = new Date()
-    //                     // task.countdown(until)
-    //                 }
-    //             })
-    //             return {
-    //                 ...state,
-    //                 tasks: tasks,
-    //             }
-    //         // change this to expired only task id
-    //         case 'expiredTask':
-    //             tasks = [...state.tasks]
-    //             tasks.forEach(task => {
-    //                 if (task.id === action.payload.id) {
-    //                     let until = task.estimateDate.getTime() - new Date().getTime()
-    //                     if (until < 0 && task.doneAt === null && !task.expired) {
-    //                         task.expired = true
-    //                         task.isActive = false
-    //                         Alert.alert('Tarefa Expirada!', `A tarefa ${task.name} não foi concluída a tempo`,[
-    //                             { text: 'OK' }
-    //                         ], { cancelable: true })
-    //                     }
-    //                 }
-    //             })
-    //             return {
-    //                 ...state,
-    //                 tasks: tasks
-    //             }
-    //         case 'initCountdown':
-    //             tasks = [...state.tasks]
-    //             tasks.forEach(task => {
-    //                 if (task.id === action.payload.id) {
-    //                     let until = task.initDate.getTime() - new Date().getTime()
-    //                     if (until < 0 && task.doneAt === null && !task.isActive && !task.expired) {
-    //                         task.isActive = true
-    //                         task.startAt = new Date()
-    //                         Alert.alert(`Tarefa Iniciada!`, `A tarefa ${task.name} foi iniciada.`,[
-    //                             { text: 'OK' }
-    //                         ], { cancelable: true })
-    //                     }
-    //                 }   
-    //             })
-    //             return {
-    //                 ...state,
-    //                 tasks: tasks
-    //             }
-    //         case 'doneTask':
-    //             tasks = [...state.tasks]
-    //             tasks.forEach(task => {
-    //                 if (task.id === action.payload.id) {
-    //                     task.doneAt = new Date()
-    //                     task.isActive = false
-    //                 }
-    //             })
-    //             return {
-    //                 ...state,
-    //                 tasks: tasks
-    //             }
-    //         case 'setMission':
-    //             tasks = [...state.tasks]
-    //             tasks.forEach(task => {
-    //                 if (task.id === action.payload.id) {
-    //                     task.missionId = action.payload.missionId
-    //                 }  
-    //             })
-    //             return {
-    //                 ...state,
-    //                 tasks: tasks
-    //             }
-    //         case 'setDate2Null':
-    //             tasks = [...state.tasks]
-    //             tasks.forEach(task => {
-    //                 if (task.id === action.payload.id) {
-    //                     task.estimateDate = null
-    //                     task.initDate = null
-    //                 }
-    //             })
-    //             return {
-    //                 ...state,
-    //                 tasks: tasks
-    //             }
-    //         case 'toggleDoneAt':
-    //             tasks = [...state.tasks]
-    //             tasks.forEach(task => {
-    //                 if (task.id === action.payload.id) {
-    //                     // console.log('toggleDoneAt', task.doneAt)
-    //                     task.doneAt ? task.doneAt = null : task.doneAt = new Date()
-    //                 }
-    //             })
-    //             return {
-    //                 ...state,
-    //                 tasks: tasks
-    //             }
-    //         default:
-    //             return state
-    //     }
-    // }
+    const doneTask = async (taskId) => {
+        const tasks = [...state.tasks]
+        const task = tasks.find(t => t.id === taskId)
+        if (task) {
+            const res = await axios.put(`${server}/tasks/${taskId}`, { 
+                attr: ['doneAt', 'isActive'], data: [new Date(), false]
+            })
+            if (res.status === 200)
+                getTasks()
+        }
+    }
 
-    //const [state, dispatch] = useReducer(reducer, initialState)
+    const setMission = async (taskId, missionId) => {
+        console.log('setMission', missionId)
+        const tasks = [...state.tasks]
+        const task = tasks.find(t => t.id === taskId)
+        if (task) {
+            const res = await axios.put(`${server}/tasks/${taskId}`, { 
+                attr: ['missionId'], data: [`${missionId}`]
+            })
+            if (res.status === 200)
+                getTasks()
+        }
+    }
 
+
+    const setDate2Null = async (taskId) => {
+        const tasks = [...state.tasks]
+        const task = tasks.find(t => t.id === taskId)
+        if (task) {
+            const res = await axios.put(`${server}/tasks/${taskId}`, { 
+                attr: ['estimateDate', 'initDate', 'isActive'], data: [null, null, false]
+            })
+            if (res.status === 200)
+                getTasks()
+        }
+    }
+
+    const toggleDoneAt = async (taskId) => {
+        const tasks = [...state.tasks]
+        const task = tasks.find(t => t.id === taskId)
+        if (task) {
+            const res = await axios.put(`${server}/tasks/${taskId}`, { 
+                attr: ['doneAt'], data: [task.doneAt ? null : new Date()]
+            })
+            if (res.status === 200)
+                getTasks()
+        }
+    }
+
+    // set the initial state to the TASK
     if (user.id && !initial) {
-        console.log('ENTROU AQUI')
         getTasks()
         setInitial(true)
     }
@@ -244,6 +162,11 @@ export default TasksProvider = ({ children })  => {
             expiredTask,
             initCountdown,
             setInitial,
+            doneTask,
+            startTask,
+            setMission,
+            setDate2Null,
+            toggleDoneAt,
         }}>
             { children }
         </TasksContext.Provider>

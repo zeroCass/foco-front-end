@@ -18,14 +18,14 @@ import RenderButton from '../../components/RenderButton'
 
 
 export default props => {
-    const { dispatch: dispatchAuth } = useContext(AuthContext)
-    const { dispatch } = useContext(MissionsContext)
+    const { updateStatus } = useContext(AuthContext)
+    const { startMission, doneMission } = useContext(MissionsContext)
     const [showCompletition, setShowCompletition] = useState(false)
     const stringDateFormated = moment(props.estimateDate).format('D[/]MMM[/]YY')
     const stringTimeFormated = moment(props.estimateDate).format('HH[:]mm')
     // if the task is active, then calculate the time left until expired
     const until = 
-        props.isActive ? (props.estimateDate.getTime() / 1000) - (new Date().getTime() / 1000) : 0
+        props.isActive ? (new Date(props.estimateDate).getTime() / 1000) - (new Date().getTime() / 1000) : 0
 
     return (
         <Modal
@@ -39,10 +39,7 @@ export default props => {
                 onCloseCompletition={(userSettings) => {
                     setShowCompletition(false)
                     if (userSettings) {
-                        dispatchAuth({
-                            type: 'setXP',
-                            payload: null
-                        })
+                        updateStatus(userSettings)
                     }   
                 }} 
                 {...props} type={'Mission'} />
@@ -79,10 +76,11 @@ export default props => {
                                     <View style={{ alignItems: 'center' }} >
                                         <Text style={{ fontWeight:'bold' }} >Tarefas:</Text>
                                     </View>
-                                    {props.tasks.map(task => {
+                                    {props.tasks ?
+                                    props.tasks.map(task => {
                                         const mission = props
                                         return <TaskSelectList key={task.id} {...task} mission={mission} />
-                                    })}
+                                    }) : null}
                                 </View>
                                 <View style={{ alignItems: 'center' }} >
                                     <Text>Prazo Final</Text>
@@ -98,7 +96,7 @@ export default props => {
                                 <View style={{ justifyContent: 'center', alignItems: 'center', marginTop: 20 }} >
                                     {props.isActive && !props.expired && props.doneAt === null ? 
                                         <CountDownTimer until={until} />: null}
-                                    {<RenderButton {...props} dispatch={dispatch} type={'Mission'} 
+                                    {<RenderButton {...props} done={doneMission} start={startMission} type={'Mission'} 
                                     onOpenCompletition={() => setShowCompletition(true)}  />}
                                 </View>
                             </View>
