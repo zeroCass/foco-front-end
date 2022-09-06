@@ -28,7 +28,7 @@ export default (props) => {
 
     // if the task is active, then calculate the time left until expired
     const until = 
-        props.isActive ? (props.estimateDate.getTime() / 1000) - (new Date().getTime() / 1000) : 0
+        props.isActive ? (new Date (props.estimateDate).getTime() / 1000) - (new Date().getTime() / 1000) : 0
 
     return (
         <Modal

@@ -26,7 +26,7 @@ const difficultyOptions = [
 
 export default props => {
     // const { state } = useContext(AuthContext)
-    const { dispatch } = useContext(TasksContext)
+    const { addTask } = useContext(TasksContext)
     const { user } = useContext(AuthContext)
 
     const [name, setName] = useState('')
@@ -90,10 +90,7 @@ export default props => {
         }
         
         // call the dispatch
-        dispatch({
-            type: 'addTask',
-            payload: newTask
-        })
+        addTask(newTask)
         // go to Main Page
         props.navigation.navigate('Main')
 

@@ -13,8 +13,8 @@ export default (props) => {
     } = useContext(AuthContext)
     
     const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
+    const [email, setEmail] = useState('joao.snow@email.com')
+    const [password, setPassword] = useState('123')
     const [hidePass, setHidePass] = useState(true)
     const [hidePassConfirm, setHidePassConfirm] = useState(true)
     const [confirmPass, setConfirmPass] = useState('')

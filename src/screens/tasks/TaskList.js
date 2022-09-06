@@ -10,6 +10,7 @@ import {
 import { Button, IconButton } from 'react-native-paper'
 
 import Task from '../../components/Task'
+import moment from 'moment'
 
 //contextos
 import { TasksContext } from '../../context/Tasks'
@@ -18,7 +19,7 @@ import { AuthContext } from '../../context/Auth'
 
 export default (props) => {
     const  { user } = useContext(AuthContext)
-    const { state, dispatch } = useContext(TasksContext)
+    const { state, getTasks, expiredTask, initCountdown } = useContext(TasksContext)
     // const [countdowns, setCountdowns] = useState([])
     // const [countdowns2init, setCountdowns2init] = useState([])
 
@@ -43,10 +44,10 @@ export default (props) => {
             if (!found) {
                 // pegar tasks que o init time < date now
                 if ((!task.expired && task.doneAt === null) && 
-                    (task.initDate === null || (new Date().getTime() >= task.initDate.getTime()))) {
-                    const until = task.estimateDate.getTime() - new Date().getTime()
+                    (task.initDate === null || (new Date().getTime() >= new Date(task.initDate).getTime()))) {
+                    const until = new Date(task.estimateDate).getTime() - new Date().getTime()
                     auxCountdowns.push({
-                        timeout: setTimeout(() => dispatch({ type: 'expiredTask', payload: {id: task.id }}), until),
+                        timeout: setTimeout(() => expiredTask(task.id), until),
                         id: task.id,
                     })
                 } 
@@ -61,10 +62,10 @@ export default (props) => {
     const setupCountidowns2init = () => {
         const auxCountdowns2init = tasks.map(task => {
             if ((!task.expired && task.doneAt === null) && 
-                (task.initDate !== null && task.initDate.getTime() > new Date().getTime())) {
-                const until = task.initDate.getTime() - new Date().getTime()
+                (task.initDate !== null && new Date(task.initDate).getTime() > new Date().getTime())) {
+                const until = new Date(task.initDate).getTime() - new Date().getTime()
                 return setTimeout(() => {
-                    dispatch({ type: 'initCountdown', payload: { id: task.id } })
+                    initCountdown(task.id)
                     setupCountdowns() //call to setup the coutndown to expired
                 }, until)
             }
@@ -75,6 +76,7 @@ export default (props) => {
     }
 
     useEffect(() => {
+        console.log('render')
         setupCountidowns2init()
         setupCountdowns()
         return () => { 

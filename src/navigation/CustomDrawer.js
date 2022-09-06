@@ -14,9 +14,13 @@ import { Avatar } from 'react-native-paper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons'
 
 import { AuthContext } from '@context/Auth'
+import { TasksContext } from '@context/Tasks'
+
 
 export default props => {
     const { user, signout } = useContext(AuthContext)
+    const { setInitial } = useContext(TasksContext)
+
     return (
         <View style={{ flex: 1 }}>
             <View style={styles.perfil}>
@@ -55,7 +59,10 @@ export default props => {
             </View>
             <View style={styles.bottom}>
                 <View style={{ flexDirection:'row', padding: 10, alignItems: 'center', justifyContent: 'space-between' }}>
-                    <TouchableOpacity onPress={signout} >
+                    <TouchableOpacity onPress={() => {
+                        signout()
+                        setInitial(false)
+                    }} >
                         <Icon name='exit-to-app' color='#FFF' size={30}/>
                     </TouchableOpacity>
                     <Text style={{ color:'#FFF', fontWeight:'bold' }} >Sair</Text>

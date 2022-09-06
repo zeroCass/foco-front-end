@@ -8,11 +8,12 @@ import { AuthContext } from '../context/Auth'
 import CreateTask from '../screens/tasks/CreateTask'
 import CreateMission from '../screens/missions/CreateMission'
 import AuthScreen from '@screens/auth/AuthScreen'
+import { TasksContext } from '@context/Tasks'
 
 
 function Login({ navigation }) {
     const { user, setUser } = useContext(AuthContext)
-
+    const { getTasks } = useContext(TasksContext)
     return (
         <View>
             <Text>Login</Text>
@@ -52,6 +53,7 @@ const Stack = createNativeStackNavigator()
 
 export default () => {
     const { user } = useContext(AuthContext)
+
     return (
         <Stack.Navigator initialRouteName='AuthScreen'>
         {!user.token 
