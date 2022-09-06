@@ -1,6 +1,6 @@
 import { Platform, Alert } from 'react-native'
 
-const server = Platform.OS === 'ios' ? 'http://localhost:3000' : 'http://10.0.2.2:3000'
+const server = Platform.OS === 'ios' ? 'http://54.233.129.48:3000' : 'http://54.233.129.48:3000'
 // const server = 'http://localhost:3000'
 
 const showError = (err) => {
