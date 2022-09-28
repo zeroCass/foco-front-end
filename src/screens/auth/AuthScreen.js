@@ -1,5 +1,5 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { View, StyleSheet, Alert, Text } from 'react-native'
+import { View, StyleSheet, Alert, Text, ActivityIndicator } from 'react-native'
 import { TextInput, Button, Checkbox } from 'react-native-paper'
 import { TextInputMask } from 'react-native-masked-text'
 
@@ -12,33 +12,39 @@ export default (props) => {
         getGodparentId,
     } = useContext(AuthContext)
     
-    const [name, setName] = useState('')
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('123')
-    const [hidePass, setHidePass] = useState(true)
-    const [hidePassConfirm, setHidePassConfirm] = useState(true)
-    const [confirmPass, setConfirmPass] = useState('')
-    const [birthDate, setBirthDate] = useState(null)
-    const [godparentId, setGodparentId] = useState(null)
-    const [godparent, setGodparent] = useState(false)
-    const [godparentType, setGodparentType] = useState('')
-    const [newUser, setNewUser] = useState(false)
-    const [age, setAge] = useState(null)
+    // multiple states
+    const [state, setState] = useState({
+        name: '',
+        email: '',
+        password: '',
+        hidePass: true,
+        hidePassConfirm: true,
+        confirmPass: '',
+        birthDate: null,
+        godparentId: null,
+        godparentType: '',
+        godparent: false,
+        newUser: false,
+        age: null,
+        isLoading: false,
+    })
     
+    // everytime birthDate changes, calculate the current age
     useEffect(() => {
-        setAge(getAge())
-    }, [birthDate])
+        setState({...state, age: getAge()})
+    }, [state.birthDate])
 
 
+    // get formatted fate to store in databse (0000-00-00)
     const getFormattedBirthDate = () => {
         let formattedBirthDate = birthDate.split('/')
         return `${formattedBirthDate[2]}-${formattedBirthDate[1]}-${formattedBirthDate[0]}`
     }
 
     const getAge = () => { 
-        if (birthDate && birthDate.length === 10) {
+        if (state.birthDate && state.birthDate.length === 10) {
             let today = new Date();
-            let auxbirthDate = birthDate.split('/')
+            let auxbirthDate = state.birthDate.split('/')
             auxbirthDate = new Date(auxbirthDate[2], auxbirthDate[1]-1, auxbirthDate[0])
             let age = today.getFullYear() - auxbirthDate.getFullYear();
             let m = today.getMonth() - auxbirthDate.getMonth();
@@ -51,17 +57,17 @@ export default (props) => {
 
     const signup = () => {
         // if is dependet user
-        if (godparentId) {
+        if (state.godparentId) {
             // check if the godparentId is valid
-            getGodparentId(godparentId)
+            getGodparentId(state.godparentId)
             .then((data) => {
                 if (data.length === 0) throw 'Parent com id nao encontrado'
                 const [ parent ] = data.data
                 usersignup({
-                    name,
-                    email,
-                    password,
-                    birthDate : getFormattedBirthDate(),
+                    name: state.name,
+                    email: state.email,
+                    password: state.password,
+                    birthDate: getFormattedBirthDate(),
                     mainGodparent: parent.id,
                     type: 'dependent'
                 })
@@ -72,55 +78,53 @@ export default (props) => {
             .catch(e => console.log(e))
 
             //reset values
-            setAge(null)
-            setNewUser(false)
+            setState({...state, age: null, newUser: false})
             return 
         }
 
         // if not dependent user
         let type = 'autonomous'
-        if (godparent) {
+        if (state.godparent) {
             type = 'godparent'
         }
         console.log('type', type)
         usersignup({
-            name,
-            email,
-            password,
-            birthDate : getFormattedBirthDate(),
+            name: state.name,
+            email: state.email,
+            password: state.password,
+            birthDate: getFormattedBirthDate(),
             type,
-            descr: godparentType,
+            descr: state.godparentType,
         })
         .then(({ data }) => data.status === 200 ? setNewUser(false) : setNewUser(false))
         .catch(e => console.log(e))
 
         //reset values
-        setAge(null)
-        setNewUser(false)
+        setState({...state, age: null, newUser: false})
     }
 
     const signin = () => {
-        usersignin({ email, password })
+        usersignin({ email: state.email, password: state.password })
     }
 
     return (
         <View style={styles.container}>
             <View style={styles.centerView} >
                 <TextInput
-                    value={email}
+                    value={state.email}
                     label='E-mail'
-                    onChangeText={(email) => setEmail(email)}
+                    onChangeText={(email) => setState({...state, email})}
                     mode='outlined'
                     outlineColor='#6495ED'
                     placeholder='email@mail.com'
                     activeOutlineColor='#6495ED'
                     left={<TextInput.Icon icon='at' />}
                 />
-                { newUser && 
+                { state.newUser && 
                 <TextInput
-                    value={name}
+                    value={state.name}
                     label='Nome Completo'
-                    onChangeText={(name) => setName(name)}
+                    onChangeText={(name) => setState({...state, name})}
                     mode='outlined'
                     outlineColor='#6495ED'
                     placeholder=''
@@ -129,37 +133,37 @@ export default (props) => {
                 /> 
                 }
                 <TextInput
-                    value={password}
+                    value={state.password}
                     label='Senha'
-                    onChangeText={(password) => setPassword(password)}
+                    onChangeText={(password) => setState({...state, password})}
                     mode='outlined'
                     outlineColor='#6495ED'
                     placeholder='*********'
                     activeOutlineColor='#6495ED'
-                    secureTextEntry={hidePass}
-                    right={<TextInput.Icon icon='eye' onPress={() => setHidePass(!hidePass)} />}
+                    secureTextEntry={state.hidePass}
+                    right={<TextInput.Icon icon='eye' onPress={() => setState({...state, hidePass: !state.hidePass})} />}
                     left={<TextInput.Icon icon='lock' />}
                 />
-                { newUser && 
+                { state.newUser && 
                 <TextInput
-                    value={confirmPass}
+                    value={state.confirmPass}
                     label='Confirme a Senha'
-                    onChangeText={(confirmPass) => setConfirmPass(confirmPass)}
+                    onChangeText={(confirmPass) => setState({...state, confirmPass})}
                     mode='outlined'
                     outlineColor='#6495ED'
                     placeholder='*********'
                     activeOutlineColor='#6495ED'
-                    secureTextEntry={hidePassConfirm}
-                    right={<TextInput.Icon icon='eye' onPress={() => setHidePassConfirm(!hidePassConfirm)} />}
+                    secureTextEntry={state.hidePassConfirm}
+                    right={<TextInput.Icon icon='eye' onPress={() => setState({...state, hidePassConfirm: !state.hidePassConfirm})} />}
                     left={<TextInput.Icon icon='lock' />}
                 /> 
                 }
-                { newUser && 
+                { state.newUser && 
                 <TextInput
-                    value={birthDate}
+                    value={state.birthDate}
                     label='Data de Nascimento'
                     onChangeText={(birthDate) => { 
-                        setBirthDate(birthDate)
+                        setState({...state, birthDate})
                     }}
                     mode='outlined'
                     outlineColor='#6495ED'
@@ -178,36 +182,36 @@ export default (props) => {
                     }
                 /> 
                 }
-                { age && age < 16 && !godparentId ? 
+                { state.age && state.age < 16 && !state.godparentId ? 
                 Alert.alert(`Usuario menor de 16 anos`, `É necessário informar o ID do padrinho ou madrinha para continuar`,[
                             { text: 'OK' }], { cancelable: true }) : null }
-                { age && age < 16 ?
+                { state.age && state.age < 16 ?
                 <TextInput
-                    value={godparentId}
+                    value={state.godparentId}
                     label='ID do(a) Padrinho/Madrinha'
-                    onChangeText={(id) => setGodparentId(id)}
+                    onChangeText={(id) => setState({...state, godparentId: id})}
                     mode='outlined'
                     outlineColor='#6495ED'
                     placeholder='37'
                     activeOutlineColor='#6495ED'
                     left={<TextInput.Icon icon='key-outline' />}
                 />  : null}
-                {godparent ? 
+                {state.godparent ? 
                 <TextInput
-                    value={godparentType}
+                    value={state.godparentType}
                     label='Tipo de Padrinho/Madrinha'
-                    onChangeText={(type) => setGodparentType(type)}
+                    onChangeText={(type) => setState({...state, godparentType: type})}
                     mode='outlined'
                     outlineColor='#6495ED'
                     placeholder='Ex: Mãe'
                     activeOutlineColor='#6495ED'
                     left={<TextInput.Icon icon='account' />}
                 />  : null }
-                {age && age > 16 ?
+                {state.age && state.age > 16 ?
                 <View style={styles.checkBox}>
                     <Checkbox
-                        status={godparent ? 'checked' : 'unchecked'}
-                        onPress={() => setGodparent(!godparent)}
+                        status={state.godparent ? 'checked' : 'unchecked'}
+                        onPress={() => setState({...state, godparent: !state.godparent})}
                         color='purple'
                     />
                     <View>
@@ -215,19 +219,15 @@ export default (props) => {
                     </View>
                 </View>
                     : null}
-                {!newUser 
+                {!state.newUser 
                     ?  <Button onPress={() => signin()} >LOGIN</Button>
                     : <Button onPress={() => signup()} >REGISTRAR-SE</Button>}   
-                {!newUser
-                ?  <Button onPress={() => { 
-                    setNewUser(!newUser) 
-                    setAge(null)
-                    setGodparent(false) 
+                {!state.newUser
+                ?  <Button onPress={() => {
+                    setState({...state, newUser: !state.newUser, age: null, godparent: false}) 
                 }} >REGISTRE-SE</Button>
                 :  <Button onPress={() => {
-                    setNewUser(!newUser) 
-                    setAge(null)
-                    setGodparent(false)
+                    setState({...state, newUser: !state.newUser, age: null, godparent: false}) 
                 }} >JÁ POSSUO CONTA</Button>} 
                 
             </View>
