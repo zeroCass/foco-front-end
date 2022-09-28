@@ -33,9 +33,51 @@ features que podem ser feitas futuramente.
 
 ## Layout
 <img
-		width="210"
-		alt="login"
-		src="https://github.com/zeroCass/foco-front-end/blob/main/preview/login-screen.png">
+	width="210"
+	alt="login"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/login-screen.png">
+
+<img
+	width="210"
+	alt="register"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/register_screen.png">
+
+<img
+	width="210"
+	alt="tasks"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/tasks_screen.png">
+	
+<img
+	width="210"
+	alt="tasks_info"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/tasks_info.png">
+	
+<img
+	width="210"
+	alt="missions"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/missions_screen.png">
+	
+<img
+	width="210"
+	alt="missions_info"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/mission_info.png">
+	
+<img
+	width="210"
+	alt="shop"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/shop_screen.png">
+	
+<img
+	width="210"
+	alt="menu"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/menu.png">
+	
+<img
+	width="210"
+	alt="perfil"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/perfil.png">
+
+
 
 
 ### Pré-requesitos
