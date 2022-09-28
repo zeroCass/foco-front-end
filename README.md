@@ -121,7 +121,7 @@ react-native run-android
 O repositório contendo o código fonte para o back-end pode ser encontrado [aqui](https://github.com/zeroCass/foco-back-end)
 
 ## Features
- * [x] Refatorar useState em AuthScreen
- * [ ] Filtrar tasks/missions por dia
- * [ ] Filtrar tasks/missions completadas ou não
- * [ ] Adicionar Foto
+ - [x] Refatorar useState em AuthScreen
+ - [ ] Filtrar tasks/missions por dia
+ - [ ] Filtrar tasks/missions completadas ou não
+ - [ ] Adicionar Foto
