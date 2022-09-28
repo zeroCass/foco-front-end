@@ -1,11 +1,13 @@
 <h1 align="center">
-FOCO - Aplicativo
+	FOCO - Aplicativo
+</h1>
+<h2 align="center">
 <img
      	align="center"
 	width="210"
 	alt="tasks_overview"
 	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/tasks.gif">
-</h1>
+</h2>
 
 ## Tabela de Conteúdos
   * [Sobre](#sobre)
