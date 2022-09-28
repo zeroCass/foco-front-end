@@ -15,7 +15,7 @@ que se encaixasse em um dos 17 objetivos da [Onu](https://brasil.un.org/pt-br/sd
 
 FOCO é um aplicativo de gerenciamento de tempo que utiliza-se de elementos da gamificação para aumentar o engajamento
 dos usuários e sua produtidade. A princípio, foi pensado para atender exclusivamente crianças e adolescentes
-portadores de TDAH, conforme o artigo [citar o atigo] que apresenta argumentos do porquê a gamificação juntamente com 
+portadores de TDAH, conforme o [arigo](https://github.com/zeroCass/foco-front-end/blob/main/preview/Software%20Requirements%20for%20the%20Design%20of%20Gamified%20Applications%20for%20Time%20Management%20and%20Tasks%20for%20Children%20and%20Adolescents%20with%20ADHD.pdf) que apresenta argumentos do porquê a gamificação juntamente com 
 um aplicativo de gestão de tarefas pode auxiliar esse público. Porém, posteriormente o grupo decidiu ampliar o público alvo
 afim de incluir pessoas que somente queiram gerenciar melhor o seu tempo.
 
