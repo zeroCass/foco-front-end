@@ -113,6 +113,6 @@ O repositório contendo o código fonte para o back-end pode ser encontrado [aqu
 
 ## Features
  * [x] Refatorar useState em AuthScreen
- * [] Filtrar tasks/missions por dia
- * [] Filtrar tasks/missions completadas ou não
- * [] Adicionar Foto
+ * [ ] Filtrar tasks/missions por dia
+ * [ ] Filtrar tasks/missions completadas ou não
+ * [ ] Adicionar Foto
