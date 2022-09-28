@@ -1,4 +1,4 @@
-# FOCO - Aplicativo
+# <center>FOCO - Aplicativo</center>
 
 ## Tabela de Conteúdos
   * [Sobre](#sobre)
