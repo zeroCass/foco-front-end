@@ -32,6 +32,10 @@ features que podem ser feitas futuramente.
 
 
 ## Layout
+<img
+		width="210"
+		alt="login"
+		src="https://github.com/zeroCass/foco-front-end/blob/main/preview/login-screen.png">
 
 
 ### Pré-requesitos
