@@ -5,11 +5,12 @@ import { TextInputMask } from 'react-native-masked-text'
 
 import { AuthContext } from '@context/Auth'
 
+import axios from 'axios'
+import { server, showError } from '../../common'
+
 export default (props) => {
     const { 
-        signin: usersignin, 
-        signup: usersignup,
-        getGodparentId,
+        signin: userSignin
     } = useContext(AuthContext)
     
     // multiple states
@@ -37,10 +38,11 @@ export default (props) => {
 
     // get formatted fate to store in databse (0000-00-00)
     const getFormattedBirthDate = () => {
-        let formattedBirthDate = birthDate.split('/')
+        let formattedBirthDate = state.birthDate.split('/')
         return `${formattedBirthDate[2]}-${formattedBirthDate[1]}-${formattedBirthDate[0]}`
     }
 
+    // calculates the age
     const getAge = () => { 
         if (state.birthDate && state.birthDate.length === 10) {
             let today = new Date();
@@ -55,30 +57,52 @@ export default (props) => {
         }
     }
 
-    const signup = () => {
+
+    const getGodparentId = () => {
+        return axios.get(`${server}/users/godparent/${state.godparentId}`)
+    }
+
+    const signup = async () => {
         // if is dependet user
         if (state.godparentId) {
             // check if the godparentId is valid
-            getGodparentId(state.godparentId)
-            .then((data) => {
-                if (data.length === 0) throw 'Parent com id nao encontrado'
-                const [ parent ] = data.data
-                usersignup({
+            try {
+                setState({...state, isLoading: true})
+                const godparentIdData = await getGodparentId()
+                if (godparentIdData.length === 0) {
+                    setState({...state, isLoading: false})
+                    throw 'Parent com id nao encontrado'
+                }
+                // signup user
+                const data = await axios.post(`${server}/auth/signup`, {
                     name: state.name,
                     email: state.email,
                     password: state.password,
                     birthDate: getFormattedBirthDate(),
-                    mainGodparent: parent.id,
+                    mainGodparent: state.godparentId,
                     type: 'dependent'
                 })
-                .then(({ data }) => data.status === 200 ? setNewUser(false) : setNewUser(false))
-                .catch(e => console.log(e))
+                // if not sucess 
+                if (data.status !== 200) showError(data.data)
 
-            })
-            .catch(e => console.log(e))
-
+            }catch(err) {
+                setState({...state, isLoading: false})
+                showError(err)
+                console.log(err)
+            }
             //reset values
-            setState({...state, age: null, newUser: false})
+            setState({...state, 
+                age: null, 
+                newUser: false,
+                godparent: false,
+                birthDate: null,
+                name: '',
+                hidePass: true,
+                hidePassConfirm: true,
+                confirmPass: '',
+                godparentId: '',
+                godparentType: '',
+            })
             return 
         }
 
@@ -87,24 +111,60 @@ export default (props) => {
         if (state.godparent) {
             type = 'godparent'
         }
-        console.log('type', type)
-        usersignup({
-            name: state.name,
-            email: state.email,
-            password: state.password,
-            birthDate: getFormattedBirthDate(),
-            type,
-            descr: state.godparentType,
-        })
-        .then(({ data }) => data.status === 200 ? setNewUser(false) : setNewUser(false))
-        .catch(e => console.log(e))
+
+        try {
+            setState({...state, isLoading: true})
+            const data = await axios.post(`${server}/auth/signup`, {
+                name: state.name,
+                email: state.email,
+                password: state.password,
+                birthDate: getFormattedBirthDate(),
+                type,
+                descr: state.godparentType,
+            })
+
+            if (data.status !== 200) showError(data.data)
+
+        } catch (err) {
+            setState({...state, isLoading: false})
+            console.log(err)
+            showError(err)
+        }
 
         //reset values
-        setState({...state, age: null, newUser: false})
+        setState({...state, 
+            age: null, 
+            newUser: false,
+            godparent: false,
+            birthDate: null,
+            name: '',
+            hidePass: true,
+            hidePassConfirm: true,
+            confirmPass: '',
+            godparentId: '',
+            godparentType: '',
+        })
     }
 
-    const signin = () => {
-        usersignin({ email: state.email, password: state.password })
+
+
+    const signin = async () => {
+        try {
+            setState({...state, isLoading: true})
+            const res = await axios.post(`${server}/auth/signin`, {
+                email: state.email, 
+                password: state.password
+            })
+            const [data] = res.data
+            userSignin(data)
+            setState({...state, isLoading: false}) 
+
+        } catch(err) {
+            setState({...state, isLoading: false})
+            console.log(err)
+            showError(err)
+
+        }
     }
 
     return (
