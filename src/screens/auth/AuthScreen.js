@@ -1,11 +1,14 @@
 import React, { useContext, useState, useEffect } from 'react'
-import { View, StyleSheet, Alert, Text, ActivityIndicator } from 'react-native'
+import { View, StyleSheet, Alert, Text } from 'react-native'
 import { TextInput, Button, Checkbox } from 'react-native-paper'
 import { TextInputMask } from 'react-native-masked-text'
+import LoadingSpinner from '@components/LoadingSpinner'
 
 import { AuthContext } from '@context/Auth'
 
 import axios from 'axios'
+axios.defaults.timeout = 10000;
+
 import { server, showError } from '../../common'
 
 export default (props) => {
@@ -168,6 +171,10 @@ export default (props) => {
     }
 
     return (
+        <>
+        {state.isLoading 
+        ? <LoadingSpinner />
+        : 
         <View style={styles.container}>
             <View style={styles.centerView} >
                 <TextInput
@@ -291,7 +298,8 @@ export default (props) => {
                 }} >JÁ POSSUO CONTA</Button>} 
                 
             </View>
-        </View>
+        </View>}
+        </>
     )
 }
 

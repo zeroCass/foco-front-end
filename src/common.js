@@ -4,7 +4,6 @@ const server = Platform.OS === 'ios' ? 'http://54.233.129.48:3000' : 'http://54.
 // const server = 'http://localhost:3000'
 
 const showError = (err) => {
-    console.log('showErr', err)
     if (err.response && err.response.data) {
         Alert.alert(`Ops!Algo deu errado: ${err.response.data}`)
         return 
@@ -14,7 +13,12 @@ const showError = (err) => {
         return
     }
 
-    Alert.alert(`Ops!Algo deu errado: ${err}`)
+    if (err.request) {
+        Alert.alert(`Ops!Algo deu errado: ${err.request._response}`)
+        return
+    }
+
+    Alert.alert(`Ops!Algo deu errado: ${err.message}`)
         
 }
 
