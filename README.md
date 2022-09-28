@@ -1,4 +1,9 @@
-# <center>FOCO - Aplicativo</center>
+<center><h1>FOCO - Aplicativo</h1></center>
+<img
+     	align="center"
+	width="210"
+	alt="tasks_overview"
+	src="https://github.com/zeroCass/foco-front-end/blob/main/preview/login-screen.png">
 
 ## Tabela de Conteúdos
   * [Sobre](#sobre)
