@@ -140,7 +140,7 @@ export default props => {
                     />
                     <View style={styles.selectedBox}>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }} >
-                            <Text>Prioridade</Text>
+                            <Text style={styles.txt} >Prioridade</Text>
                             <RadioForm
                                 radio_props={priorityOptions}
                                 initial={0}
@@ -150,7 +150,7 @@ export default props => {
                             />
                         </View>
                         <View style={{ justifyContent: 'center', alignItems: 'center' }} >
-                            <Text>Dificuldade</Text>
+                            <Text style={styles.txt}>Dificuldade</Text>
                             <RadioForm
                                 radio_props={difficultyOptions}
                                 initial={0}
@@ -162,7 +162,7 @@ export default props => {
                     </View>
                     <View>
                     <View style={{ alignItems: 'center' }} >
-                        <Text>Prazo Incial(Opicional)</Text>
+                        <Text style={styles.txt}>Prazo Incial(Opicional)</Text>
                         <View style={styles.dateView}>
                             <Button mode='contained' icon='clock-time-nine' style={styles.dateButton} onPress={() => {
                                 DateTimePickerAndroid.open({
@@ -188,7 +188,7 @@ export default props => {
                     
                     </View>
                     <View style={{ alignItems: 'center' }} >
-                        <Text>Prazo Final</Text>
+                        <Text style={styles.txt}>Prazo Final</Text>
                         <View style={styles.dateView}>
                             <Button mode='contained' icon='clock-time-nine' style={styles.dateButton} onPress={() => {
                                 DateTimePickerAndroid.open({
@@ -251,4 +251,7 @@ const styles = StyleSheet.create({
         alignItems: 'center', 
         justifyContent: 'center',
     },
+    txt: {
+        color: '#000',
+    }
 })

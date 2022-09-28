@@ -244,7 +244,7 @@ export default props => {
                         Selecionar Tarefas
                     </Button>
                     <View style={{ alignItems: 'center' }} >
-                        <Text>Prazo Incial(Opicional)</Text>
+                        <Text style={{ color: '#000' }} >Prazo Incial(Opicional)</Text>
                         <View style={styles.dateView}>
                             <Button mode='contained' icon='clock-time-nine' style={styles.dateButton} onPress={() => {
                                 DateTimePickerAndroid.open({
@@ -268,7 +268,7 @@ export default props => {
                         </View>
                     </View>
                     <View style={{ alignItems: 'center' }} >
-                        <Text>Prazo Final</Text>
+                        <Text style={{ color: '#000' }}>Prazo Final</Text>
                         <View style={styles.dateView}>
                             <Button mode='contained' icon='clock-time-nine' style={styles.dateButton} onPress={() => {
                                 DateTimePickerAndroid.open({
